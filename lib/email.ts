@@ -5,29 +5,33 @@ import { Resend } from "resend";
 async function sendEmail(to: string, subject: string, html: string) {
   const resend = new Resend(process.env.RESEND_API_KEY!);
   await resend.emails.send({
-    from: process.env.EMAIL_FROM || "KIDA Welfare <onboarding@resend.dev>",
+    from: process.env.EMAIL_FROM || "KIDAW <onboarding@resend.dev>",
     to,
     subject,
     html,
   });
 }
 
-// Shared visual language, mirroring the "Classical" design system
-// (serif headings, parchment ground, gold accent).
+// Shared visual language, drawn from the KIDAW logo
+// (serif headings, near-white ground, Kenyan green and red).
 const C = {
-  bg: "#f3f2f2",
-  text: "#201f1d",
-  accent: "#b68235",
-  accent700: "#7d5411",
+  bg: "#f8f7f6",
+  text: "#141413",
+  accent: "#136018",
+  accent700: "#0d4511",
+  red: "#bf0005",
   muted: "#7d7979",
   divider: "#d7d3d3",
 };
 
 function shell(inner: string) {
+  const logoUrl = `${process.env.NEXT_PUBLIC_APP_URL}/logo-mark.png`;
   return `
   <div style="background:${C.bg};padding:32px 16px;font-family:Georgia,'Times New Roman',serif;color:${C.text}">
     <div style="max-width:560px;margin:auto;background:${C.bg};border:1px solid ${C.divider};border-radius:4px;padding:44px 48px">
-      <div style="text-align:center;font-size:22px;letter-spacing:.04em">KIDA WELFARE ASSOCIATION</div>
+      <div style="text-align:center"><img src="${logoUrl}" alt="KIDAW" height="64" style="height:64px"></div>
+      <div style="text-align:center;font-size:22px;letter-spacing:.04em;margin-top:12px">KENYANS IN DARWIN</div>
+      <div style="text-align:center;font-size:12px;letter-spacing:.18em;color:${C.red}">WELFARE ASSOCIATION</div>
       <hr style="height:1px;border:0;background:${C.divider};margin:20px 0 32px">
       ${inner}
       <hr style="height:1px;border:0;background:${C.divider};margin:28px 0 16px">
@@ -54,7 +58,7 @@ export async function sendWelcomeEmail(opts: {
   });
   await sendEmail(
     opts.to,
-    `Welcome to KIDA Welfare — your member number is ${opts.memberNumber}`,
+    `Welcome to KIDAW — your member number is ${opts.memberNumber}`,
     shell(`
       <p style="font-size:15px">Dear ${firstName},</p>
       <p style="font-size:15px;text-align:justify">Your registration is complete
@@ -84,7 +88,7 @@ export async function sendContributionReceipt(opts: {
   const firstName = opts.fullName.split(" ")[0];
   await sendEmail(
     opts.to,
-    `KIDA Welfare — contribution of $${amount} received`,
+    `KIDAW — contribution of $${amount} received`,
     shell(`
       <p style="font-size:15px">Dear ${firstName},</p>
       <p style="font-size:15px;text-align:justify">Thank you — we have received

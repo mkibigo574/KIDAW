@@ -132,7 +132,7 @@ export default function RegisterPage() {
             <span className="dot" style={{ borderRadius: "50%" }}></span>
             <span>
               I accept the <a href="/policy">constitution and by‑laws</a> and the{" "}
-              <a href="/privacy">privacy policy</a> of KIDA Welfare.
+              <a href="/privacy">privacy policy</a> of KIDAW.
             </span>
           </label>
 

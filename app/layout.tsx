@@ -3,9 +3,9 @@ import Link from "next/link";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "KIDA Welfare Association",
+  title: "Kenyans in Darwin Welfare Association — KIDAW",
   description:
-    "KIDA Welfare keeps one register, one ledger, and one number for every member.",
+    "Kenyans in Darwin Welfare Association keeps one register, one ledger, and one number for every member.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -14,17 +14,30 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
           <nav className="nav">
-            <Link href="/" className="nav-brand">
-              KIDA Welfare<span style={{ color: "var(--color-accent)" }}> ·</span>{" "}
-              <span
-                style={{
-                  fontSize: 12,
-                  letterSpacing: ".14em",
-                  textTransform: "uppercase",
-                  fontFamily: "var(--font-body)",
-                }}
-              >
-                Association
+            <Link
+              href="/"
+              className="nav-brand"
+              style={{ display: "inline-flex", alignItems: "center", gap: 12 }}
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/logo-mark.png"
+                alt="KIDAW logo — black, red and green hands encircling a family"
+                style={{ height: 36, width: "auto" }}
+              />
+              <span>
+                Kenyans in Darwin{" "}
+                <span
+                  style={{
+                    fontSize: 12,
+                    letterSpacing: ".14em",
+                    textTransform: "uppercase",
+                    fontFamily: "var(--font-body)",
+                    color: "var(--color-accent-2)",
+                  }}
+                >
+                  Welfare Association
+                </span>
               </span>
             </Link>
             <div className="nav-links">
@@ -37,7 +50,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </nav>
           <div style={{ flex: 1 }}>{children}</div>
           <footer className="site-footer">
-            <span>© {new Date().getFullYear()} KIDA Welfare Association</span>
+            <span>
+              © {new Date().getFullYear()} Kenyans in Darwin Welfare Association (KIDAW)
+            </span>
             <span style={{ display: "flex", gap: 18, flexWrap: "wrap" }}>
               <Link href="/policy" style={{ color: "inherit" }}>
                 Membership policy

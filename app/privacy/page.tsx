@@ -44,7 +44,8 @@ export default function PrivacyPage() {
         Privacy policy
       </h1>
       <p className="text-muted" style={{ maxWidth: "62ch", marginTop: 10 }}>
-        KIDA Welfare Association keeps one register and one ledger. This policy
+        Kenyans in Darwin Welfare Association (KIDAW) keeps one register and
+        one ledger. This policy
         explains what goes into them, why, where it is kept, and the rights
         every member has over their own record.
       </p>

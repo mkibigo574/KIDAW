@@ -39,8 +39,9 @@ export default function PolicyPage() {
         Membership policy
       </h1>
       <p className="text-muted" style={{ maxWidth: "62ch", marginTop: 10 }}>
-        This policy summarises the constitution and by‑laws of KIDA Welfare
-        Association as they apply to registration, contributions and records.
+        This policy summarises the constitution and by‑laws of Kenyans in
+        Darwin Welfare Association (KIDAW) as they apply to registration,
+        contributions and records.
         Where this summary and the constitution differ, the constitution
         prevails.
       </p>
@@ -82,7 +83,7 @@ export default function PolicyPage() {
       <p className="text-muted" style={{ fontSize: 12, marginTop: 28, textAlign: "justify" }}>
         Questions about this policy: Michael Kibigo, Communication and Record
         Keeping Officer — records@kidawelfare.org. Adopted by the committee of
-        KIDA Welfare Association.
+        Kenyans in Darwin Welfare Association.
       </p>
     </main>
   );

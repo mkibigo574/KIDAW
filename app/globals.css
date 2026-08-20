@@ -2,23 +2,24 @@
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Lora:wght@400;600&display=swap');
 
 :root {
-  --color-bg: #f3f2f2;
-  --color-surface: #eae9e9;
-  --color-text: #201f1d;
-  --color-accent: #b68235;
-  --color-accent-2: #ac803e;
-  --color-divider: color-mix(in srgb, #201f1d 16%, transparent);
+  /* Palette drawn from the KIDAW logo: black, red and green hands on white */
+  --color-bg: #f8f7f6;
+  --color-surface: #efedeb;
+  --color-text: #141413;
+  --color-accent: #136018;   /* logo green — primary */
+  --color-accent-2: #bf0005; /* logo red — secondary */
+  --color-divider: color-mix(in srgb, #141413 16%, transparent);
 
-  --color-neutral-100: #f8f4f4;
-  --color-neutral-800: #444141;
+  --color-neutral-100: #f5f4f3;
+  --color-neutral-800: #3f3d3c;
 
-  --color-accent-100: #fff3e4;
-  --color-accent-600: #a06f24;
-  --color-accent-700: #7d5411;
-  --color-accent-800: #5a3b0a;
+  --color-accent-100: #e8f3e9;
+  --color-accent-600: #115415;
+  --color-accent-700: #0d4511;
+  --color-accent-800: #093309;
 
-  --color-accent-2-100: #fff3e4;
-  --color-accent-2-800: #573d14;
+  --color-accent-2-100: #fbeaea;
+  --color-accent-2-800: #6e0206;
 
   --font-heading: "Cormorant Garamond", Georgia, serif;
   --font-heading-weight: 600;
@@ -171,6 +172,7 @@ img { display: block; max-width: 100%; }
   border-radius: calc(var(--radius-md) * 0.75);
 }
 .tag-accent { background: var(--color-accent-100); color: var(--color-accent-800); }
+.tag-accent-2 { background: var(--color-accent-2-100); color: var(--color-accent-2-800); }
 .tag-neutral { background: var(--color-neutral-100); color: var(--color-neutral-800); }
 .tag-outline { border: 1px solid var(--color-accent); color: var(--color-accent); }
 
@@ -216,7 +218,7 @@ img { display: block; max-width: 100%; }
 .panel-surface { background: var(--color-surface); }
 
 .notice { margin-top: var(--space-3); padding: var(--space-2) var(--space-3); border-radius: var(--radius-md); font-size: 13px; }
-.notice-error { border: 1px solid #a4442f; color: #a4442f; }
+.notice-error { border: 1px solid var(--color-accent-2); color: var(--color-accent-2); }
 .notice-ok { border: 1px solid var(--color-accent); color: var(--color-accent-700); }
 
 .site-footer {

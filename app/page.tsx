@@ -39,6 +39,12 @@ export default function HomePage() {
     <main className="page page-wide" style={{ paddingTop: 64 }}>
       <div className="grid-hero">
         <div>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/logo-mark.png"
+            alt=""
+            style={{ height: 76, width: "auto", marginBottom: 18 }}
+          />
           <div className="kicker">Established registry · Membership open</div>
           <h1 style={{ fontSize: 66, fontWeight: 400, lineHeight: 1.02, margin: "18px 0 20px" }}>
             A welfare society
@@ -48,8 +54,9 @@ export default function HomePage() {
             its members.
           </h1>
           <p style={{ textAlign: "justify", maxWidth: "52ch", fontSize: 16, lineHeight: 1.75 }}>
-            KIDA Welfare keeps one register, one ledger, and one number for every
-            member. Registration issues your permanent member number and records
+            Kenyans in Darwin Welfare Association (KIDAW) keeps one register,
+            one ledger, and one number for every member. Registration issues
+            your permanent member number and records
             your founding contribution. Everything after that — monthly
             contributions, receipts, statements — happens in the member portal.
           </p>
