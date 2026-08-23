@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import NewsletterSignup from "@/components/NewsletterSignup";
+import NavLinks from "@/components/NavLinks";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -42,19 +43,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 </span>
               </span>
             </Link>
-            <div className="nav-links">
-              <Link href="/">Home</Link>
-              <Link href="/register">Register</Link>
-              <Link href="/portal">Member portal</Link>
-              <Link href="/registry">Registry</Link>
-              <Link href="/ledger">Ledger</Link>
-              <Link href="/gallery">Gallery</Link>
-              <Link href="/stack">Stack</Link>
-              <a href="mailto:contact@kidawelfare.org">Contact us</a>
-              <Link href="/register" className="btn btn-primary" style={{ padding: "6px 14px" }}>
-                Join now
-              </Link>
-            </div>
+            <NavLinks />
           </nav>
           <div className="flag-stripe" aria-hidden />
           <div style={{ flex: 1 }}>{children}</div>

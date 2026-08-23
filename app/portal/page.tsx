@@ -3,7 +3,9 @@
 import { useEffect, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { supabaseBrowser, supabaseConfigured } from "@/lib/supabaseBrowser";
+import Link from "next/link";
 import PasswordField from "@/components/PasswordField";
+import { roleLabel } from "@/lib/roles";
 
 function ConfigNotice() {
   return (
@@ -355,6 +357,8 @@ function Dashboard({ session }: { session: Session }) {
       </div>
       <hr className="hr" style={{ margin: "28px 0 32px" }} />
 
+      <OfficerBanner session={session} />
+
       <div className="grid-portal-stats">
         {stats.map((k) => (
           <div key={k.label}>
@@ -457,6 +461,82 @@ function Dashboard({ session }: { session: Session }) {
         setBeneficiaries={setBeneficiaries}
       />
     </main>
+  );
+}
+
+// Shown to committee officers on their own dashboard, so signing in as an
+// officer plainly differs from signing in as a member, and their tools are one
+// click away rather than hidden behind a URL.
+function OfficerBanner({ session }: { session: Session }) {
+  const [roles, setRoles] = useState<string[]>([]);
+  const [permissions, setPermissions] = useState<string[]>([]);
+
+  useEffect(() => {
+    fetch("/api/me", {
+      headers: { Authorization: `Bearer ${session.access_token}` },
+    })
+      .then((r) => r.json())
+      .then((d) => {
+        setRoles(d.roles ?? []);
+        setPermissions(d.permissions ?? []);
+      })
+      .catch(() => {});
+  }, [session]);
+
+  if (roles.length === 0) return null;
+
+  const has = (p: string) => permissions.includes(p);
+  const tools: { href: string; label: string; note: string }[] = [];
+  if (has("registry.read"))
+    tools.push({
+      href: "/registry",
+      label: "Member register",
+      note: has("members.edit") ? "View and edit member records" : "View the register",
+    });
+  if (has("ledger.read"))
+    tools.push({
+      href: "/ledger",
+      label: "Contribution ledger",
+      note: has("ledger.record") ? "Record payments taken offline" : "View every transaction",
+    });
+  if (has("ledger.read"))
+    tools.push({
+      href: "/arrears",
+      label: "Arrears report",
+      note: has("settings.manage") ? "Set the agreed monthly rate" : "Who is behind, and by how much",
+    });
+  if (has("ledger.read"))
+    tools.push({
+      href: "/disbursements",
+      label: "Disbursements",
+      note: has("disbursement.approve")
+        ? "Approve payments out of the fund"
+        : has("disbursement.initiate")
+          ? "Request and record payments out"
+          : "Payments out of the fund",
+    });
+
+  return (
+    <div className="panel officer-banner">
+      <div className="kicker" style={{ color: "var(--color-accent-3)" }}>
+        Committee access
+      </div>
+      <h3 style={{ fontWeight: 400, margin: "8px 0 4px" }}>
+        {roles.map(roleLabel).join(" · ")}
+      </h3>
+      <p className="text-muted" style={{ fontSize: 13, margin: "0 0 16px", maxWidth: "62ch" }}>
+        You hold an office in the association, so you have tools beyond your own
+        membership. Everything below this panel is your personal member record.
+      </p>
+      <div className="grid-officer-tools">
+        {tools.map((t) => (
+          <Link key={t.href} href={t.href} className="officer-tool">
+            <span className="officer-tool-label">{t.label}</span>
+            <span className="officer-tool-note">{t.note}</span>
+          </Link>
+        ))}
+      </div>
+    </div>
   );
 }
 
