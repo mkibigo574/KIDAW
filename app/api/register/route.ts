@@ -6,17 +6,8 @@ import { stripe, REGISTRATION_FEE_CENTS } from "@/lib/stripe";
 // Creates a pending member (member number is assigned by the DB trigger)
 // and returns a Stripe Checkout URL for the mandatory $100 registration fee.
 export async function POST(req: NextRequest) {
-  const {
-    fullName,
-    email,
-    phone,
-    nationalId,
-    dateOfBirth,
-    branch,
-    nextOfKin,
-    referredBy,
-    password,
-  } = await req.json();
+  const { fullName, email, phone, dateOfBirth, branch, referredBy, password } =
+    await req.json();
 
   if (!fullName?.trim() || !email?.trim()) {
     return NextResponse.json(
@@ -49,10 +40,8 @@ export async function POST(req: NextRequest) {
         full_name: fullName.trim(),
         email: normalizedEmail,
         phone,
-        national_id: nationalId || null,
         date_of_birth: dateOfBirth || null,
         branch: branch || null,
-        next_of_kin: nextOfKin || null,
         referred_by: referredBy || null,
       })
       .select("id")

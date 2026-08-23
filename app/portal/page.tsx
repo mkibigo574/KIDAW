@@ -29,7 +29,15 @@ type Member = {
   email: string;
   status: string;
   branch: string | null;
+  next_of_kin: { name_relationship?: string | null; phone?: string | null } | null;
   created_at: string;
+};
+
+type Beneficiary = {
+  id: string;
+  full_name: string;
+  relationship: string;
+  date_of_birth: string | null;
 };
 
 type Contribution = {
@@ -223,6 +231,7 @@ function SignIn() {
 function Dashboard({ session }: { session: Session }) {
   const [member, setMember] = useState<Member | null>(null);
   const [contributions, setContributions] = useState<Contribution[]>([]);
+  const [beneficiaries, setBeneficiaries] = useState<Beneficiary[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [amount, setAmount] = useState("25");
   const [error, setError] = useState("");
@@ -239,6 +248,11 @@ function Dashboard({ session }: { session: Session }) {
           .select("id, amount_cents, type, paid_at")
           .order("paid_at", { ascending: false });
         setContributions(c ?? []);
+        const { data: b } = await supabase
+          .from("beneficiaries")
+          .select("id, full_name, relationship, date_of_birth")
+          .order("created_at");
+        setBeneficiaries(b ?? []);
       }
       setLoaded(true);
     }
@@ -418,13 +432,232 @@ function Dashboard({ session }: { session: Session }) {
             <div className="card-kicker">Records</div>
             <div className="card-title">Your details</div>
             <p className="card-body">
-              Next of kin, branch and contact details on file with the Record
-              Keeping Officer. Email records@kidawelfare.org to request an update.
+              Home address and contact details on file with the Record Keeping
+              Officer. Email records@kidawelfare.org to request an update.
+              Your next of kin and beneficiaries are managed below.
             </p>
-            <div className="card-meta">{member.branch ?? "No branch on file"}</div>
+            <div className="card-meta">{member.branch ?? "No address on file"}</div>
           </div>
         </div>
       </div>
+
+      <FamilySection
+        session={session}
+        member={member}
+        beneficiaries={beneficiaries}
+        setBeneficiaries={setBeneficiaries}
+      />
     </main>
+  );
+}
+
+function FamilySection({
+  session,
+  member,
+  beneficiaries,
+  setBeneficiaries,
+}: {
+  session: Session;
+  member: Member;
+  beneficiaries: Beneficiary[];
+  setBeneficiaries: React.Dispatch<React.SetStateAction<Beneficiary[]>>;
+}) {
+  const [kinName, setKinName] = useState(member.next_of_kin?.name_relationship ?? "");
+  const [kinPhone, setKinPhone] = useState(member.next_of_kin?.phone ?? "");
+  const [kinSaved, setKinSaved] = useState(false);
+  const [benName, setBenName] = useState("");
+  const [benRel, setBenRel] = useState("spouse");
+  const [benDob, setBenDob] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+
+  async function callFamily(payload: object) {
+    const res = await fetch("/api/family", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${session.access_token}`,
+      },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Request failed.");
+    return data;
+  }
+
+  async function saveKin(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
+    setKinSaved(false);
+    setBusy(true);
+    try {
+      await callFamily({
+        nextOfKin: { name_relationship: kinName, phone: kinPhone },
+      });
+      setKinSaved(true);
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function addBeneficiary(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
+    setBusy(true);
+    try {
+      const data = await callFamily({
+        addBeneficiary: {
+          fullName: benName,
+          relationship: benRel,
+          dateOfBirth: benDob,
+        },
+      });
+      setBeneficiaries((b) => [...b, data.beneficiary]);
+      setBenName("");
+      setBenDob("");
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function removeBeneficiary(id: string) {
+    setError("");
+    setBusy(true);
+    try {
+      await callFamily({ removeBeneficiaryId: id });
+      setBeneficiaries((b) => b.filter((x) => x.id !== id));
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <section style={{ marginTop: 44 }}>
+      <h3 style={{ fontWeight: 400, margin: 0 }}>Next of kin &amp; beneficiaries</h3>
+      <p className="text-muted" style={{ fontSize: 13, marginTop: 6, maxWidth: "64ch" }}>
+        Your next of kin is the person we contact first. Beneficiaries are
+        your nuclear family members — spouse and children — recognised for
+        welfare support.
+      </p>
+      {error && <div className="notice notice-error">{error}</div>}
+      <div className="grid-family">
+        <div className="card">
+          <div className="card-kicker">Next of kin</div>
+          <form onSubmit={saveKin}>
+            <div className="field">
+              <label htmlFor="kinName">Name and relationship</label>
+              <input
+                id="kinName"
+                className="input"
+                required
+                placeholder="e.g. Jane Wanjiru — sister"
+                value={kinName}
+                onChange={(e) => setKinName(e.target.value)}
+              />
+            </div>
+            <div className="field" style={{ marginTop: 12 }}>
+              <label htmlFor="kinPhone">Mobile number</label>
+              <input
+                id="kinPhone"
+                className="input"
+                value={kinPhone}
+                onChange={(e) => setKinPhone(e.target.value)}
+              />
+            </div>
+            <button className="btn btn-primary btn-block" disabled={busy}>
+              {member.next_of_kin ? "Update next of kin" : "Save next of kin"}
+            </button>
+          </form>
+          {kinSaved && <div className="notice notice-ok">Next of kin saved.</div>}
+        </div>
+
+        <div className="card">
+          <div className="card-kicker">Beneficiaries — nuclear family</div>
+          {beneficiaries.length === 0 && (
+            <p className="card-body">No beneficiaries recorded yet.</p>
+          )}
+          {beneficiaries.length > 0 && (
+            <div className="table-wrap">
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Relationship</th>
+                    <th>Date of birth</th>
+                    <th />
+                  </tr>
+                </thead>
+                <tbody>
+                  {beneficiaries.map((b) => (
+                    <tr key={b.id}>
+                      <td>{b.full_name}</td>
+                      <td>
+                        <span className="tag tag-accent" style={{ textTransform: "capitalize" }}>
+                          {b.relationship}
+                        </span>
+                      </td>
+                      <td className="tabular">{b.date_of_birth ?? "—"}</td>
+                      <td style={{ textAlign: "right" }}>
+                        <button
+                          type="button"
+                          className="btn btn-secondary"
+                          style={{ padding: "3px 10px", fontSize: 12 }}
+                          disabled={busy}
+                          onClick={() => removeBeneficiary(b.id)}
+                        >
+                          Remove
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+          <form onSubmit={addBeneficiary} className="family-add">
+            <div className="field">
+              <label htmlFor="benName">Full name</label>
+              <input
+                id="benName"
+                className="input"
+                required
+                value={benName}
+                onChange={(e) => setBenName(e.target.value)}
+              />
+            </div>
+            <div className="field">
+              <label htmlFor="benRel">Relationship</label>
+              <select
+                id="benRel"
+                className="input"
+                value={benRel}
+                onChange={(e) => setBenRel(e.target.value)}
+              >
+                <option value="spouse">Spouse</option>
+                <option value="child">Child</option>
+              </select>
+            </div>
+            <div className="field">
+              <label htmlFor="benDob">Date of birth (optional)</label>
+              <input
+                id="benDob"
+                className="input"
+                value={benDob}
+                onChange={(e) => setBenDob(e.target.value)}
+              />
+            </div>
+            <button className="btn btn-primary" disabled={busy}>
+              Add beneficiary
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
   );
 }

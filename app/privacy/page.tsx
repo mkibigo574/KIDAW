@@ -2,7 +2,7 @@ const SECTIONS = [
   {
     n: "01",
     title: "What we collect",
-    body: "When you register we collect your full name, national ID or passport number, email address, mobile number, date of birth, home area or branch, and your next of kin's name, relationship and phone number. As you use the portal we also record your member number, your contributions (amount, date, reference and payment method), and the emails we have sent you.",
+    body: "When you register we collect your full name, email address, mobile number, date of birth and home address. In the member portal you may add your next of kin and your beneficiaries (spouse and children), and we record their names, relationships and contact details. As you use the portal we also record your member number, your contributions (amount, date, reference and payment method), and the emails we have sent you.",
   },
   {
     n: "02",

@@ -314,6 +314,13 @@ img { display: block; max-width: 100%; }
   text-transform: capitalize;
 }
 
+/* — portal family section — */
+.grid-family { display: grid; grid-template-columns: 360px 1fr; gap: 24px; margin-top: 20px; align-items: start; }
+.family-add {
+  display: grid; grid-template-columns: 1fr 140px 170px auto; gap: 12px;
+  align-items: end; margin-top: 6px;
+}
+
 /* — committee commitment statement — */
 .commitment {
   background: var(--color-surface);
@@ -351,6 +358,8 @@ img { display: block; max-width: 100%; }
   .grid-officials-cards, .grid-form, .grid-mission, .site-footer-top { grid-template-columns: 1fr; }
   .grid-values, .grid-involve { grid-template-columns: 1fr; }
   .grid-gallery { grid-template-columns: 1fr 1fr; }
+  .grid-family, .family-add { grid-template-columns: 1fr; }
+  .family-add { align-items: stretch; }
   .site-flags {
     background:
       url("/kenya-flag-map.webp") no-repeat left -30px top 12% / auto 34vh,

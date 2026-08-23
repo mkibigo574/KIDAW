@@ -41,7 +41,7 @@ const SCHEMA = [
   { col: "full_name", type: "text", note: "As on the national ID" },
   { col: "national_id", type: "text, unique", note: "Encrypted at rest" },
   { col: "email / phone", type: "text", note: "Login identity and contact number" },
-  { col: "branch", type: "text", note: "Home area for welfare coordination" },
+  { col: "branch", type: "text", note: "Home address for welfare coordination" },
   { col: "next_of_kin", type: "jsonb", note: "Name, relationship, phone" },
   { col: "registered_at", type: "timestamptz", note: "Set when the $100 payment clears" },
   { col: "status", type: "enum", note: "pending · good_standing · arrears · exited" },

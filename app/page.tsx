@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 const STEPS = [
-  { n: "01", title: "Register", body: "One form: your details, next of kin and branch." },
+  { n: "01", title: "Register", body: "One form: your details, home address and contacts." },
   { n: "02", title: "Contribute $100", body: "The mandatory registration contribution, paid securely by card." },
   { n: "03", title: "Receive your number", body: "A permanent number in the KIDAW series, emailed with your receipt." },
   { n: "04", title: "Use the portal", body: "Contribute monthly, view your statement, download receipts." },
@@ -9,7 +9,7 @@ const STEPS = [
 
 const VALUES = [
   { name: "Compassion", body: "We stand with members and their families in bereavement, illness and hardship." },
-  { name: "Unity", body: "One community of Kenyans in Darwin, whatever the branch or home area." },
+  { name: "Unity", body: "One community of Kenyans in Darwin, wherever in the Territory they live." },
   { name: "Transparency", body: "One open register and one open ledger; every contribution is accounted for." },
   { name: "Dignity", body: "Support is given respectfully, as a right of membership, never as charity." },
   { name: "Responsibility", body: "Every member contributes; every official is answerable to the members." },

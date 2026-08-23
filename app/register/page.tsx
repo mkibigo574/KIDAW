@@ -5,13 +5,10 @@ import { useEffect, useState } from "react";
 export default function RegisterPage() {
   const [form, setForm] = useState({
     fullName: "",
-    nationalId: "",
     email: "",
     phone: "",
     dateOfBirth: "",
     branch: "",
-    kinName: "",
-    kinPhone: "",
     referredBy: "",
     password: "",
     confirmPassword: "",
@@ -57,10 +54,8 @@ export default function RegisterPage() {
           fullName: form.fullName,
           email: form.email,
           phone: form.phone,
-          nationalId: form.nationalId,
           dateOfBirth: form.dateOfBirth,
           branch: form.branch,
-          nextOfKin: { name_relationship: form.kinName, phone: form.kinPhone },
           referredBy: form.referredBy,
           password: form.password || undefined,
         }),
@@ -90,10 +85,6 @@ export default function RegisterPage() {
             <input id="fullName" className="input" required value={form.fullName} onChange={set("fullName")} />
           </div>
           <div className="field">
-            <label htmlFor="nationalId">National ID / Passport</label>
-            <input id="nationalId" className="input" value={form.nationalId} onChange={set("nationalId")} />
-          </div>
-          <div className="field">
             <label htmlFor="email">Email address</label>
             <input id="email" type="email" className="input" required value={form.email} onChange={set("email")} />
           </div>
@@ -106,17 +97,13 @@ export default function RegisterPage() {
             <input id="dob" className="input" value={form.dateOfBirth} onChange={set("dateOfBirth")} />
           </div>
           <div className="field">
-            <label htmlFor="branch">Home area / branch</label>
+            <label htmlFor="branch">Home address</label>
             <input id="branch" className="input" value={form.branch} onChange={set("branch")} />
           </div>
-          <div className="field" style={{ gridColumn: "1/-1" }}>
-            <label htmlFor="kinName">Next of kin — name and relationship</label>
-            <input id="kinName" className="input" value={form.kinName} onChange={set("kinName")} />
-          </div>
-          <div className="field" style={{ gridColumn: "1/-1" }}>
-            <label htmlFor="kinPhone">Next of kin — mobile number</label>
-            <input id="kinPhone" className="input" value={form.kinPhone} onChange={set("kinPhone")} />
-          </div>
+          <p className="text-muted" style={{ gridColumn: "1/-1", fontSize: 12, margin: 0 }}>
+            After registration you&apos;ll add your next of kin and your
+            beneficiaries — your nuclear family members — in the member portal.
+          </p>
           <div className="field" style={{ gridColumn: "1/-1" }}>
             <label htmlFor="referredBy">Referred by (optional)</label>
             <input

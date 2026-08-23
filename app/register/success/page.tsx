@@ -13,7 +13,16 @@ export default function RegisterSuccessPage() {
           member number and receipt is on its way to your inbox.
         </p>
         <hr className="hr" style={{ margin: "28px 0" }} />
-        <Link href="/portal" className="btn btn-primary">
+        <div className="panel panel-surface" style={{ padding: 20, textAlign: "left" }}>
+          <div className="card-kicker">Next step</div>
+          <p style={{ fontSize: 14, margin: "8px 0 0" }}>
+            Sign in to the member portal and add your <strong>next of kin</strong>{" "}
+            and your <strong>beneficiaries</strong> — your nuclear family
+            members (spouse and children) — so the committee knows who to
+            support on your behalf.
+          </p>
+        </div>
+        <Link href="/portal" className="btn btn-primary" style={{ marginTop: 24 }}>
           Open the member portal
         </Link>
       </div>
