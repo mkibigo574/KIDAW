@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
-import { stripe } from "@/lib/stripe";
+import { stripe, appUrl } from "@/lib/stripe";
 
 // POST /api/contribute
 // Creates a Stripe Checkout session for an ongoing welfare contribution.
@@ -18,13 +18,13 @@ export async function POST(req: NextRequest) {
 
   const token = req.headers.get("authorization")?.replace("Bearer ", "");
   if (!token) {
-    return NextResponse.json({ error: "Not signed in." }, { status: 401 });
+    return NextResponse.json({ error: "You are not signed in. Please sign in again." }, { status: 401 });
   }
 
   const db = supabaseAdmin();
   const { data: userData, error: authError } = await db.auth.getUser(token);
   if (authError || !userData.user?.email) {
-    return NextResponse.json({ error: "Invalid session." }, { status: 401 });
+    return NextResponse.json({ error: "Your session has expired. Please sign out and sign in again." }, { status: 401 });
   }
 
   const { data: member } = await db
@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL;
+
   const session = await stripe().checkout.sessions.create({
     mode: "payment",
     customer_email: userData.user.email,
@@ -55,8 +55,8 @@ export async function POST(req: NextRequest) {
       },
     ],
     metadata: { member_id: member.id, type: "contribution" },
-    success_url: `${appUrl}/portal?paid=1`,
-    cancel_url: `${appUrl}/portal?cancelled=1`,
+    success_url: `${appUrl()}/portal?paid=1`,
+    cancel_url: `${appUrl()}/portal?cancelled=1`,
   });
 
   return NextResponse.json({ checkoutUrl: session.url });

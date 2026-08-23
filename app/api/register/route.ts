@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
-import { stripe, REGISTRATION_FEE_CENTS } from "@/lib/stripe";
+import { stripe, appUrl, REGISTRATION_FEE_CENTS } from "@/lib/stripe";
 
 // POST /api/register
 // Creates a pending member (member number is assigned by the DB trigger)
@@ -77,7 +77,7 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL;
+
   const session = await stripe().checkout.sessions.create({
     mode: "payment",
     customer_email: normalizedEmail,
@@ -92,8 +92,8 @@ export async function POST(req: NextRequest) {
       },
     ],
     metadata: { member_id: memberId, type: "registration" },
-    success_url: `${appUrl}/register/success?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${appUrl}/register?cancelled=1`,
+    success_url: `${appUrl()}/register/success?session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${appUrl()}/register?cancelled=1`,
   });
 
   return NextResponse.json({ checkoutUrl: session.url });

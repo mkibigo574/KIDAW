@@ -12,13 +12,13 @@ export async function POST(req: NextRequest) {
 
   const token = req.headers.get("authorization")?.replace("Bearer ", "");
   if (!token) {
-    return NextResponse.json({ error: "Not signed in." }, { status: 401 });
+    return NextResponse.json({ error: "You are not signed in. Please sign in again." }, { status: 401 });
   }
 
   const db = supabaseAdmin();
   const { data: userData, error: authError } = await db.auth.getUser(token);
   if (authError || !userData.user?.email) {
-    return NextResponse.json({ error: "Invalid session." }, { status: 401 });
+    return NextResponse.json({ error: "Your session has expired. Please sign out and sign in again." }, { status: 401 });
   }
 
   const { data: member } = await db
