@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import PasswordField from "@/components/PasswordField";
 
 export default function RegisterPage() {
   const [form, setForm] = useState({
@@ -114,28 +115,20 @@ export default function RegisterPage() {
               onChange={set("referredBy")}
             />
           </div>
-          <div className="field">
-            <label htmlFor="password">Portal password (optional)</label>
-            <input
-              id="password"
-              type="password"
-              className="input"
-              minLength={8}
-              placeholder="At least 8 characters"
-              value={form.password}
-              onChange={set("password")}
-            />
-          </div>
-          <div className="field">
-            <label htmlFor="confirmPassword">Confirm password</label>
-            <input
-              id="confirmPassword"
-              type="password"
-              className="input"
-              value={form.confirmPassword}
-              onChange={set("confirmPassword")}
-            />
-          </div>
+          <PasswordField
+            id="password"
+            label="Portal password (optional)"
+            minLength={8}
+            placeholder="At least 8 characters"
+            value={form.password}
+            onChange={(v) => setForm((f) => ({ ...f, password: v }))}
+          />
+          <PasswordField
+            id="confirmPassword"
+            label="Confirm password"
+            value={form.confirmPassword}
+            onChange={(v) => setForm((f) => ({ ...f, confirmPassword: v }))}
+          />
           <p className="text-muted" style={{ gridColumn: "1/-1", fontSize: 12, margin: 0 }}>
             Set a password to sign in to the member portal directly. Leave it
             blank to sign in with an email link instead.

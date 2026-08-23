@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { supabaseBrowser, supabaseConfigured } from "@/lib/supabaseBrowser";
+import PasswordField from "@/components/PasswordField";
 
 function ConfigNotice() {
   return (
@@ -183,17 +184,14 @@ function SignIn() {
             />
           </div>
           {mode === "password" && (
-            <div className="field" style={{ marginTop: 12 }}>
-              <label htmlFor="password">Password</label>
-              <input
-                id="password"
-                type="password"
-                className="input"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
+            <PasswordField
+              id="password"
+              label="Password"
+              required
+              value={password}
+              onChange={setPassword}
+              style={{ marginTop: 12 }}
+            />
           )}
           <button className="btn btn-primary btn-block" disabled={loading || sent}>
             {loading
@@ -504,29 +502,22 @@ function PasswordCard() {
         waiting for an email link.
       </p>
       <form onSubmit={handleSubmit}>
-        <div className="field">
-          <label htmlFor="newPassword">New password</label>
-          <input
-            id="newPassword"
-            type="password"
-            className="input"
-            required
-            minLength={8}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
-        <div className="field" style={{ marginTop: 10 }}>
-          <label htmlFor="confirmPassword">Confirm password</label>
-          <input
-            id="confirmPassword"
-            type="password"
-            className="input"
-            required
-            value={confirm}
-            onChange={(e) => setConfirm(e.target.value)}
-          />
-        </div>
+        <PasswordField
+          id="newPassword"
+          label="New password"
+          required
+          minLength={8}
+          value={password}
+          onChange={setPassword}
+        />
+        <PasswordField
+          id="confirmPassword"
+          label="Confirm password"
+          required
+          value={confirm}
+          onChange={setConfirm}
+          style={{ marginTop: 10 }}
+        />
         <button className="btn btn-primary btn-block" disabled={saving}>
           {saving ? "Saving…" : "Save password"}
         </button>

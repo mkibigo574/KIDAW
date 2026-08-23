@@ -125,6 +125,18 @@ img { display: block; max-width: 100%; }
 .input:hover { border-color: color-mix(in srgb, var(--color-text) 45%, transparent); }
 .input:focus-visible { border-color: var(--color-accent); outline-offset: 0; }
 
+.password-wrap { position: relative; display: flex; }
+.password-wrap .input { padding-right: 62px; }
+.password-toggle {
+  position: absolute; right: 5px; top: 50%; transform: translateY(-50%);
+  padding: 4px 8px; border: 0; background: transparent; cursor: pointer;
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  font-size: 12px; line-height: 1; color: var(--color-accent);
+  border-radius: var(--radius-sm);
+}
+.password-toggle:hover { background: color-mix(in srgb, var(--color-accent) 12%, transparent); }
+.password-toggle:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 1px; }
+
 .radio { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px; }
 .radio input, .seg-opt input {
   position: absolute; opacity: 0; width: 0; height: 0; pointer-events: none;

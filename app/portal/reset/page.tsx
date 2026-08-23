@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { supabaseBrowser, supabaseConfigured } from "@/lib/supabaseBrowser";
+import PasswordField from "@/components/PasswordField";
 
 // Landing page for the password-recovery email link. The link signs the
 // member in with a recovery session; from here they choose a new password.
@@ -62,29 +63,22 @@ export default function ResetPasswordPage() {
         )}
         {ready && hasSession && !done && (
           <form onSubmit={handleSubmit} style={{ marginTop: 8 }}>
-            <div className="field">
-              <label htmlFor="password">New password</label>
-              <input
-                id="password"
-                type="password"
-                className="input"
-                required
-                minLength={8}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-            <div className="field" style={{ marginTop: 12 }}>
-              <label htmlFor="confirm">Confirm new password</label>
-              <input
-                id="confirm"
-                type="password"
-                className="input"
-                required
-                value={confirm}
-                onChange={(e) => setConfirm(e.target.value)}
-              />
-            </div>
+            <PasswordField
+              id="password"
+              label="New password"
+              required
+              minLength={8}
+              value={password}
+              onChange={setPassword}
+            />
+            <PasswordField
+              id="confirm"
+              label="Confirm new password"
+              required
+              value={confirm}
+              onChange={setConfirm}
+              style={{ marginTop: 12 }}
+            />
             <button className="btn btn-primary btn-block" disabled={saving}>
               {saving ? "Saving…" : "Save password"}
             </button>
