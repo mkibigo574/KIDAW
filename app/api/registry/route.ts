@@ -9,18 +9,19 @@ export async function GET(req: NextRequest) {
   if (!auth.ok) return auth.res;
   const { db, official } = auth.ctx;
 
-  const { data: members, error } = await db
-    .from("members")
-    .select("id, member_number, full_name, email, branch, status, created_at")
-    .is("deleted_at", null) // soft-deleted members stay in the register, not the view
-    .order("created_at", { ascending: false });
+  // Independent reads: issued together rather than one after the other, which
+  // halves the round trips to the database region.
+  const [{ data: members, error }, { data: sums }] = await Promise.all([
+    db
+      .from("members")
+      .select("id, member_number, full_name, email, branch, status, created_at")
+      .is("deleted_at", null) // soft-deleted members stay in the register, not the view
+      .order("created_at", { ascending: false }),
+    db.from("contributions").select("member_id, amount_cents"),
+  ]);
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
-
-  const { data: sums } = await db
-    .from("contributions")
-    .select("member_id, amount_cents");
   const totals = new Map<string, number>();
   for (const c of sums ?? []) {
     totals.set(c.member_id, (totals.get(c.member_id) ?? 0) + c.amount_cents);

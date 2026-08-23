@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { authenticate, requirePermission } from "@/lib/apiAuth";
-import { ROLES, type Role } from "@/lib/roles";
+import { ROLES, invalidateRoles, type Role } from "@/lib/roles";
 import { recordAudit } from "@/lib/audit";
 
 // GET /api/roles — the committee as it currently stands.
@@ -62,6 +62,7 @@ export async function POST(req: NextRequest) {
       }
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
+    invalidateRoles();
     await recordAudit(db, {
       actor,
       action: "role.appoint",
@@ -101,6 +102,7 @@ export async function POST(req: NextRequest) {
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
+    invalidateRoles();
     await recordAudit(db, {
       actor,
       action: "role.revoke",

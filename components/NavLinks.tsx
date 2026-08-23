@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { supabaseBrowser, supabaseConfigured } from "@/lib/supabaseBrowser";
+import { getMe, clearMe } from "@/lib/me";
 
 // Navigation that reflects the signed-in person. Officers' tools are hidden
 // from ordinary members rather than shown and then refused.
@@ -15,26 +16,16 @@ export default function NavLinks() {
     const supabase = supabaseBrowser();
 
     async function refresh() {
-      const { data } = await supabase.auth.getSession();
-      const token = data.session?.access_token;
-      setSignedIn(Boolean(token));
-      if (!token) {
-        setPermissions([]);
-        return;
-      }
-      try {
-        const res = await fetch("/api/me", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const me = await res.json();
-        setPermissions(res.ok ? (me.permissions ?? []) : []);
-      } catch {
-        setPermissions([]);
-      }
+      const me = await getMe();
+      setSignedIn(Boolean(me));
+      setPermissions(me?.permissions ?? []);
     }
 
     refresh();
-    const { data: sub } = supabase.auth.onAuthStateChange(() => refresh());
+    const { data: sub } = supabase.auth.onAuthStateChange(() => {
+      clearMe();
+      refresh();
+    });
     return () => sub.subscription.unsubscribe();
   }, []);
 

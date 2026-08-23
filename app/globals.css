@@ -1,5 +1,4 @@
 /* Classical design system — ported from the KIDA Welfare Claude Design project */
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Lora:wght@400;600&display=swap');
 
 :root {
   /* Palette drawn from the KIDAW logo: black, red and green hands on white */
@@ -27,9 +26,9 @@
   --color-accent-3-700: #011a54;
   --color-au-red: #e4002b;
 
-  --font-heading: "Cormorant Garamond", Georgia, serif;
+  --font-heading: var(--font-cormorant), Georgia, serif;
   --font-heading-weight: 600;
-  --font-body: "Lora", Georgia, serif;
+  --font-body: var(--font-lora), Georgia, serif;
 
   --space-1: 4.6px;
   --space-2: 9.2px;

@@ -8,6 +8,9 @@ import {
   type Permission,
 } from "@/lib/roles";
 
+const TOKEN_TTL_MS = 30_000;
+const tokenCache = new Map<string, { email: string; at: number }>();
+
 type Authed = {
   db: ReturnType<typeof supabaseAdmin>;
   email: string;
@@ -46,9 +49,30 @@ export async function authenticate(
   }
 
   const db = supabaseAdmin();
-  const { data, error } = await db.auth.getUser(token);
-  const email = data.user?.email?.toLowerCase();
-  if (error || !email) {
+
+  // Verifying the token is a round trip to the auth service in eu-west-3, paid
+  // on every API call. Access tokens are short-lived and immutable, so the
+  // result is cached briefly against the token itself. The window is the most
+  // an account deletion can lag behind.
+  const cached = tokenCache.get(token);
+  const now = Date.now();
+  let email: string | undefined;
+  if (cached && now - cached.at < TOKEN_TTL_MS) {
+    email = cached.email;
+  } else {
+    const { data, error } = await db.auth.getUser(token);
+    email = data.user?.email?.toLowerCase();
+    if (!error && email) {
+      tokenCache.set(token, { email, at: now });
+      if (tokenCache.size > 500) {
+        for (const [k, v] of tokenCache) {
+          if (now - v.at >= TOKEN_TTL_MS) tokenCache.delete(k);
+        }
+      }
+    }
+  }
+
+  if (!email) {
     return {
       ok: false,
       res: NextResponse.json(

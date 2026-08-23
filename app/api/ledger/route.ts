@@ -13,19 +13,17 @@ export async function GET(req: NextRequest) {
   if (!auth.ok) return auth.res;
   const { db, official } = auth.ctx;
 
-  const { data: entries, error } = await db
-    .from("contributions")
-    .select(
-      "id, member_id, amount_cents, currency, type, method, note, recorded_by, reversal_of, stripe_session_id, paid_at"
-    )
-    .order("paid_at", { ascending: false })
-    .limit(500);
+  const [{ data: entries, error }, { data: members }] = await Promise.all([
+    db
+      .from("contributions")
+      .select(
+        "id, member_id, amount_cents, currency, type, method, note, recorded_by, reversal_of, stripe_session_id, paid_at"
+      )
+      .order("paid_at", { ascending: false })
+      .limit(500),
+    db.from("members").select("id, member_number, full_name").is("deleted_at", null),
+  ]);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-
-  const { data: members } = await db
-    .from("members")
-    .select("id, member_number, full_name")
-    .is("deleted_at", null);
   const byId = new Map((members ?? []).map((m) => [m.id, m]));
 
   // An entry that has already been reversed should not be reversible twice.

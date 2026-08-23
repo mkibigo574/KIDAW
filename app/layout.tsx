@@ -1,8 +1,24 @@
 import type { Metadata } from "next";
+import { Cormorant_Garamond, Lora } from "next/font/google";
 import Link from "next/link";
 import NewsletterSignup from "@/components/NewsletterSignup";
 import NavLinks from "@/components/NavLinks";
 import "./globals.css";
+
+// Self-hosted at build time: the previous CSS @import blocked rendering on a
+// round trip to Google before any text could appear.
+const cormorant = Cormorant_Garamond({
+  subsets: ["latin"],
+  weight: ["400", "600"],
+  display: "swap",
+  variable: "--font-cormorant",
+});
+const lora = Lora({
+  subsets: ["latin"],
+  weight: ["400", "600"],
+  display: "swap",
+  variable: "--font-lora",
+});
 
 export const metadata: Metadata = {
   title: "Kenyans in Darwin Welfare Association — KIDAW",
@@ -12,7 +28,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${cormorant.variable} ${lora.variable}`}>
       <body>
         <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
           <div className="site-flags" aria-hidden />

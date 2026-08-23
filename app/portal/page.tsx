@@ -6,6 +6,7 @@ import { supabaseBrowser, supabaseConfigured } from "@/lib/supabaseBrowser";
 import Link from "next/link";
 import PasswordField from "@/components/PasswordField";
 import { roleLabel } from "@/lib/roles";
+import { getMe } from "@/lib/me";
 
 function ConfigNotice() {
   return (
@@ -472,15 +473,10 @@ function OfficerBanner({ session }: { session: Session }) {
   const [permissions, setPermissions] = useState<string[]>([]);
 
   useEffect(() => {
-    fetch("/api/me", {
-      headers: { Authorization: `Bearer ${session.access_token}` },
-    })
-      .then((r) => r.json())
-      .then((d) => {
-        setRoles(d.roles ?? []);
-        setPermissions(d.permissions ?? []);
-      })
-      .catch(() => {});
+    getMe().then((me) => {
+      setRoles(me?.roles ?? []);
+      setPermissions(me?.permissions ?? []);
+    });
   }, [session]);
 
   if (roles.length === 0) return null;

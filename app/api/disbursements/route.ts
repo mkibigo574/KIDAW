@@ -8,22 +8,19 @@ export async function GET(req: NextRequest) {
   if (!auth.ok) return auth.res;
   const { db, official } = auth.ctx;
 
-  const { data: disbursements, error } = await db
-    .from("disbursements")
-    .select("*")
-    .order("created_at", { ascending: false });
+  const [{ data: disbursements, error }, { data: members }, { data: contributions }] =
+    await Promise.all([
+      db.from("disbursements").select("*").order("created_at", { ascending: false }),
+      db
+        .from("members")
+        .select("id, member_number, full_name")
+        .is("deleted_at", null)
+        .order("member_number"),
+      db.from("contributions").select("amount_cents"),
+    ]);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-
-  const { data: members } = await db
-    .from("members")
-    .select("id, member_number, full_name")
-    .is("deleted_at", null)
-    .order("member_number");
   const byId = new Map((members ?? []).map((m) => [m.id, m]));
 
-  const { data: contributions } = await db
-    .from("contributions")
-    .select("amount_cents");
   const received = (contributions ?? []).reduce((s, c) => s + c.amount_cents, 0);
   const paidOut = (disbursements ?? [])
     .filter((d) => d.status === "paid")

@@ -22,24 +22,21 @@ export async function GET(req: NextRequest) {
   if (!auth.ok) return auth.res;
   const { db, official } = auth.ctx;
 
-  const { data: settingRows } = await db
-    .from("association_settings")
-    .select("key, value");
+  const [{ data: settingRows }, { data: members }, { data: entries }] =
+    await Promise.all([
+      db.from("association_settings").select("key, value"),
+      db
+        .from("members")
+        .select("id, member_number, full_name, email, phone, status, created_at")
+        .is("deleted_at", null)
+        .order("member_number"),
+      db.from("contributions").select("member_id, amount_cents, type, paid_at"),
+    ]);
   const settings = Object.fromEntries(
     (settingRows ?? []).map((r) => [r.key, r.value])
   );
   const monthlyCents = Number(settings.monthly_contribution_cents ?? 2500);
   const graceMonths = Number(settings.arrears_grace_months ?? 1);
-
-  const { data: members } = await db
-    .from("members")
-    .select("id, member_number, full_name, email, phone, status, created_at")
-    .is("deleted_at", null)
-    .order("member_number");
-
-  const { data: entries } = await db
-    .from("contributions")
-    .select("member_id, amount_cents, type, paid_at");
 
   // Reversals carry a negative amount, so summing gives the net position.
   const paid = new Map<string, { contributions: number; registration: number; last: string | null }>();

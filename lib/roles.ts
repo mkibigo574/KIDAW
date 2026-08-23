@@ -131,11 +131,33 @@ function bootstrapRoles(email: string): Role[] {
   return seeded.includes(email) ? ["chairperson"] : [];
 }
 
+// Offices change rarely — an election, not a page view — so the lookup is
+// cached briefly. Appointing or revoking clears it immediately, so the only
+// staleness possible is a role edited straight in the database.
+const ROLE_TTL_MS = 60_000;
+const roleCache = new Map<string, { roles: Role[]; at: number }>();
+let anyAppointments: { value: boolean; at: number } | null = null;
+
+export function invalidateRoles() {
+  roleCache.clear();
+  anyAppointments = null;
+}
+
 export async function officialFor(
   db: SupabaseClient,
   email: string
 ): Promise<Official> {
   const normalized = email.trim().toLowerCase();
+  const now = Date.now();
+
+  const cached = roleCache.get(normalized);
+  if (cached && now - cached.at < ROLE_TTL_MS) {
+    return {
+      email: normalized,
+      roles: cached.roles,
+      permissions: permissionsFor(cached.roles),
+    };
+  }
 
   const { data: mine } = await db
     .from("official_roles")
@@ -145,14 +167,20 @@ export async function officialFor(
 
   let roles = (mine ?? []).map((r) => r.role as Role);
 
+  // Only ordinary members reach the bootstrap check, and the answer is the same
+  // for everyone, so it is cached separately rather than run per member.
   if (roles.length === 0) {
-    const { count } = await db
-      .from("official_roles")
-      .select("id", { count: "exact", head: true })
-      .is("revoked_at", null);
-    if (!count) roles = bootstrapRoles(normalized);
+    if (!anyAppointments || now - anyAppointments.at >= ROLE_TTL_MS) {
+      const { count } = await db
+        .from("official_roles")
+        .select("id", { count: "exact", head: true })
+        .is("revoked_at", null);
+      anyAppointments = { value: Boolean(count), at: now };
+    }
+    if (!anyAppointments.value) roles = bootstrapRoles(normalized);
   }
 
+  roleCache.set(normalized, { roles, at: now });
   return { email: normalized, roles, permissions: permissionsFor(roles) };
 }
 
