@@ -112,7 +112,7 @@ function SignIn() {
         // no password set, so point them at the way out.
         setError(
           /invalid login credentials/i.test(error.message)
-            ? "That email and password don't match an account. If you've only ever signed in with an email link, choose “Forgot password?” below to set a password — or switch to “Email link”."
+            ? "That email and password don't match an account. Switch to “Email link” to sign in, then set a password from the portal — or use “Forgot password?” below."
             : error.message
         );
       }
@@ -437,6 +437,8 @@ function Dashboard({ session }: { session: Session }) {
             {error && <div className="notice notice-error">{error}</div>}
           </div>
 
+          <PasswordCard />
+
           <div className="card">
             <div className="card-kicker">Records</div>
             <div className="card-title">Your details</div>
@@ -457,6 +459,81 @@ function Dashboard({ session }: { session: Session }) {
         setBeneficiaries={setBeneficiaries}
       />
     </main>
+  );
+}
+
+// Lets a member who is already signed in (by email link or password) choose a
+// password, so setting one never depends on a reset email arriving.
+function PasswordCard() {
+  const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [done, setDone] = useState(false);
+  const [error, setError] = useState("");
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
+    setDone(false);
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters.");
+      return;
+    }
+    if (password !== confirm) {
+      setError("The two passwords do not match.");
+      return;
+    }
+    setSaving(true);
+    const { error } = await supabaseBrowser().auth.updateUser({ password });
+    setSaving(false);
+    if (error) {
+      setError(error.message);
+    } else {
+      setDone(true);
+      setPassword("");
+      setConfirm("");
+    }
+  }
+
+  return (
+    <div className="card">
+      <div className="card-kicker">Sign in</div>
+      <div className="card-title">Set your password</div>
+      <p className="card-body">
+        Choose a password to sign in with your email address instead of
+        waiting for an email link.
+      </p>
+      <form onSubmit={handleSubmit}>
+        <div className="field">
+          <label htmlFor="newPassword">New password</label>
+          <input
+            id="newPassword"
+            type="password"
+            className="input"
+            required
+            minLength={8}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </div>
+        <div className="field" style={{ marginTop: 10 }}>
+          <label htmlFor="confirmPassword">Confirm password</label>
+          <input
+            id="confirmPassword"
+            type="password"
+            className="input"
+            required
+            value={confirm}
+            onChange={(e) => setConfirm(e.target.value)}
+          />
+        </div>
+        <button className="btn btn-primary btn-block" disabled={saving}>
+          {saving ? "Saving…" : "Save password"}
+        </button>
+      </form>
+      {done && <div className="notice notice-ok">Password saved.</div>}
+      {error && <div className="notice notice-error">{error}</div>}
+    </div>
   );
 }
 
