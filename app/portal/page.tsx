@@ -106,7 +106,16 @@ function SignIn() {
         password,
       });
       setLoading(false);
-      if (error) setError(error.message);
+      if (error) {
+        // Supabase returns a bare "Invalid login credentials" here. Members who
+        // signed in with an email link before registering have an account with
+        // no password set, so point them at the way out.
+        setError(
+          /invalid login credentials/i.test(error.message)
+            ? "That email and password don't match an account. If you've only ever signed in with an email link, choose “Forgot password?” below to set a password — or switch to “Email link”."
+            : error.message
+        );
+      }
     } else {
       const { error } = await supabase.auth.signInWithOtp({
         email: normalized,
