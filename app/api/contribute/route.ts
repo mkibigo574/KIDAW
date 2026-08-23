@@ -6,7 +6,7 @@ import { stripe, appUrl } from "@/lib/stripe";
 // Creates a Stripe Checkout session for an ongoing welfare contribution.
 // The caller must be a signed-in member; we verify the Supabase access token.
 export async function POST(req: NextRequest) {
-  const { amount } = await req.json();
+  const { amount, callId } = await req.json();
   const amountCents = Math.round(Number(amount) * 100);
 
   if (!Number.isFinite(amountCents) || amountCents < 100) {
@@ -41,6 +41,24 @@ export async function POST(req: NextRequest) {
   }
 
 
+  // Naming the call on the Stripe page tells the member what they are paying,
+  // and confirms the call is still open before taking their money.
+  let callName: string | null = null;
+  if (callId) {
+    const { data: call } = await db
+      .from("contribution_calls")
+      .select("title, status")
+      .eq("id", callId)
+      .maybeSingle();
+    if (!call || call.status !== "active") {
+      return NextResponse.json(
+        { error: "That call is no longer open for contributions." },
+        { status: 409 }
+      );
+    }
+    callName = `KIDAW — ${call.title}`;
+  }
+
   const session = await stripe().checkout.sessions.create({
     mode: "payment",
     customer_email: userData.user.email,
@@ -49,12 +67,16 @@ export async function POST(req: NextRequest) {
         price_data: {
           currency: "aud",
           unit_amount: amountCents,
-          product_data: { name: "KIDAW — Member Contribution" },
+          product_data: { name: callName ?? "KIDAW — Member Contribution" },
         },
         quantity: 1,
       },
     ],
-    metadata: { member_id: member.id, type: "contribution" },
+    metadata: {
+      member_id: member.id,
+      type: "contribution",
+      ...(callId ? { call_id: String(callId) } : {}),
+    },
     success_url: `${appUrl()}/portal?paid=1`,
     cancel_url: `${appUrl()}/portal?cancelled=1`,
   });

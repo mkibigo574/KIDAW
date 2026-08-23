@@ -8,6 +8,7 @@ import PasswordField from "@/components/PasswordField";
 import { roleLabel } from "@/lib/roles";
 import { getMe } from "@/lib/me";
 import OfficerNotices from "@/components/OfficerNotices";
+import ActiveCalls from "@/components/ActiveCalls";
 
 function ConfigNotice() {
   return (
@@ -374,6 +375,8 @@ function Dashboard({ session }: { session: Session }) {
           </div>
         ))}
       </div>
+
+      <ActiveCalls session={session} />
 
       <div className="grid-portal-main">
         <div>

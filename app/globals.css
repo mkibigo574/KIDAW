@@ -506,3 +506,41 @@ img { display: block; max-width: 100%; }
   white-space: nowrap; font-size: 11px;
   color: color-mix(in srgb, var(--color-text) 50%, transparent);
 }
+
+/* — calls for contributions — */
+.grid-calls { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+.call-card {
+  display: flex; flex-direction: column; gap: 12px;
+  padding: 20px; border-radius: var(--radius-md);
+  border: 1px solid var(--color-divider);
+}
+.call-head { display: flex; justify-content: space-between; gap: 16px; align-items: baseline; }
+.call-title { font-family: var(--font-heading); font-weight: var(--font-heading-weight); font-size: 19px; }
+.call-purpose { font-size: 13px; color: color-mix(in srgb, var(--color-text) 60%, transparent); margin-top: 2px; }
+.call-amount { font-family: var(--font-heading); font-size: 22px; white-space: nowrap; }
+.call-meta {
+  display: flex; gap: 12px; align-items: center; flex-wrap: wrap;
+  font-size: 12px; color: color-mix(in srgb, var(--color-text) 55%, transparent);
+}
+.call-progress { display: flex; flex-direction: column; gap: 6px; }
+.call-progress-head { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; align-items: baseline; }
+.call-progress-foot { font-size: 12px; }
+.call-bar {
+  height: 8px; border-radius: 4px; overflow: hidden;
+  background: color-mix(in srgb, var(--color-text) 10%, transparent);
+}
+.call-bar-fill { display: block; height: 100%; border-radius: 4px; }
+/* Below 30% red, above 75% green, amber in between */
+.call-bar-low  { background: var(--color-accent-2); }
+.call-bar-mid  { background: #b26a00; }
+.call-bar-high { background: var(--color-accent); }
+.take-up { font-size: 11px; letter-spacing: .04em; padding: 2px 9px; border-radius: 9px; white-space: nowrap; }
+.take-up-low  { background: var(--color-accent-2-100); color: var(--color-accent-2-800); }
+.take-up-mid  { background: #fdf0dd; color: #7a4600; }
+.take-up-high { background: var(--color-accent-100); color: var(--color-accent-800); }
+.call-mine, .call-actions {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  flex-wrap: wrap; padding-top: 10px; border-top: 1px solid var(--color-divider);
+}
+.call-actions { justify-content: flex-start; }
+@media (max-width: 900px) { .grid-calls { grid-template-columns: 1fr; } }

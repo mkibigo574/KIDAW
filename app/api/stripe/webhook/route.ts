@@ -43,6 +43,7 @@ export async function POST(req: NextRequest) {
     currency: session.currency ?? "aud",
     type,
     stripe_session_id: session.id,
+    call_id: session.metadata?.call_id || null,
   });
   if (insertError) {
     if (insertError.code === "23505") {

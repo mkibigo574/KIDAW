@@ -36,6 +36,7 @@ export default function NavLinks() {
       <Link href="/">Home</Link>
       {!signedIn && <Link href="/register">Register</Link>}
       <Link href="/portal">{signedIn ? "My portal" : "Member portal"}</Link>
+      {signedIn && <Link href="/calls">Contributions</Link>}
       {has("registry.read") && <Link href="/registry">Registry</Link>}
       {has("ledger.read") && <Link href="/ledger">Ledger</Link>}
       {has("ledger.read") && <Link href="/disbursements">Disbursements</Link>}

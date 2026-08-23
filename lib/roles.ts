@@ -31,6 +31,8 @@ export type Permission =
   | "ledger.reconcile" // match payment-provider webhooks to the ledger
   | "ledger.reverse" // post a reversing entry; never edit a posted row
   | "arrears.flag"
+  | "calls.create" // propose a call for contributions
+  | "calls.approve" // second signature on a call
   | "disbursement.initiate"
   | "disbursement.approve" // second signature
   | "claims.approve" // second signature on welfare claims
@@ -56,6 +58,7 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     "audit.read",
     "disbursement.approve",
     "claims.approve",
+    "calls.approve",
     "reports.export",
     "settings.manage",
     "roles.manage",
@@ -71,6 +74,7 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     "ledger.reconcile",
     "ledger.reverse",
     "arrears.flag",
+    "calls.create",
     "disbursement.initiate",
     "reports.export",
     "reports.send",
@@ -102,6 +106,7 @@ export const SENSITIVE_PERMISSIONS: Permission[] = [
   "disbursement.initiate",
   "disbursement.approve",
   "claims.approve",
+  "calls.approve",
   "members.delete",
   "settings.manage",
   "roles.manage",

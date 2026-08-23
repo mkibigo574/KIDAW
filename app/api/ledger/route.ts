@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
   if (!auth.ok) return auth.res;
   const { db, email: actor } = auth.ctx;
 
-  const { memberId, amount, method, type, note, paidAt } = await req.json();
+  const { memberId, amount, method, type, note, paidAt, callId } = await req.json();
 
   const amountCents = Math.round(Number(amount) * 100);
   if (!Number.isFinite(amountCents) || amountCents <= 0) {
@@ -98,6 +98,7 @@ export async function POST(req: NextRequest) {
       method,
       note: note.trim(),
       recorded_by: actor,
+      call_id: callId || null,
       ...(paidAt ? { paid_at: new Date(paidAt).toISOString() } : {}),
     })
     .select("id, amount_cents, type, method, paid_at")
