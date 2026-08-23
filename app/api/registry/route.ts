@@ -12,6 +12,7 @@ export async function GET(req: NextRequest) {
   const { data: members, error } = await db
     .from("members")
     .select("id, member_number, full_name, email, branch, status, created_at")
+    .is("deleted_at", null) // soft-deleted members stay in the register, not the view
     .order("created_at", { ascending: false });
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });

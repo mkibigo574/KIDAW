@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { authenticate, requirePermission } from "@/lib/apiAuth";
 import { ROLES, type Role } from "@/lib/roles";
+import { recordAudit } from "@/lib/audit";
 
 // GET /api/roles — the committee as it currently stands.
 // Any signed-in member may see who holds which office; the association's
@@ -61,16 +62,24 @@ export async function POST(req: NextRequest) {
       }
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
+    await recordAudit(db, {
+      actor,
+      action: "role.appoint",
+      entity: "official_roles",
+      entityId: target,
+      before: null,
+      after: { email: target, role },
+    });
     return NextResponse.json({ ok: true });
   }
 
   if (body.revoke) {
     // Never leave the association without someone who can appoint officers.
-    if (role === "chairperson" || role === "records") {
+    if (role === "chairperson") {
       const { count } = await db
         .from("official_roles")
         .select("id", { count: "exact", head: true })
-        .in("role", ["chairperson", "records"])
+        .eq("role", "chairperson")
         .is("revoked_at", null);
       if ((count ?? 0) <= 1) {
         return NextResponse.json(
@@ -92,6 +101,14 @@ export async function POST(req: NextRequest) {
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
+    await recordAudit(db, {
+      actor,
+      action: "role.revoke",
+      entity: "official_roles",
+      entityId: target,
+      before: { email: target, role },
+      after: null,
+    });
     return NextResponse.json({ ok: true });
   }
 
