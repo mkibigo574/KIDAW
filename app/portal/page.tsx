@@ -7,6 +7,7 @@ import Link from "next/link";
 import PasswordField from "@/components/PasswordField";
 import { roleLabel } from "@/lib/roles";
 import { getMe } from "@/lib/me";
+import OfficerNotices from "@/components/OfficerNotices";
 
 function ConfigNotice() {
   return (
@@ -524,6 +525,8 @@ function OfficerBanner({ session }: { session: Session }) {
         You hold an office in the association, so you have tools beyond your own
         membership. Everything below this panel is your personal member record.
       </p>
+      <OfficerNotices session={session} />
+
       <div className="grid-officer-tools">
         {tools.map((t) => (
           <Link key={t.href} href={t.href} className="officer-tool">

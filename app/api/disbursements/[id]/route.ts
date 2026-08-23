@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { authenticate } from "@/lib/apiAuth";
 import { can } from "@/lib/roles";
 import { recordAudit } from "@/lib/audit";
+import { notify, money } from "@/lib/notify";
 
 type Ctx = { params: Promise<{ id: string }> };
 
@@ -130,6 +131,31 @@ export async function PATCH(req: NextRequest, ctx: Ctx) {
       { error: "Someone else changed this disbursement. Reload and try again." },
       { status: 409 }
     );
+  }
+
+  if (action === "approve" || action === "reject") {
+    await notify(db, {
+      audience: "treasurer",
+      event: `disbursement.${action}d`,
+      title:
+        action === "approve"
+          ? `${money(d.amount_cents)} approved — ready to pay`
+          : `${money(d.amount_cents)} was not approved`,
+      body: action === "approve" ? d.purpose : (note?.trim() || d.purpose),
+      link: "/disbursements",
+      entityId: id,
+      actor,
+    });
+  } else if (action === "pay") {
+    await notify(db, {
+      audience: "chairperson",
+      event: "disbursement.paid",
+      title: `${money(d.amount_cents)} has been paid out`,
+      body: d.purpose,
+      link: "/disbursements",
+      entityId: id,
+      actor,
+    });
   }
 
   await recordAudit(db, {

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requirePermission } from "@/lib/apiAuth";
 import { recordAudit } from "@/lib/audit";
+import { notify, money } from "@/lib/notify";
 
 const METHODS = ["cash", "bank", "other"] as const;
 const TYPES = ["registration", "contribution"] as const;
@@ -102,6 +103,16 @@ export async function POST(req: NextRequest) {
     .select("id, amount_cents, type, method, paid_at")
     .single();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  await notify(db, {
+    audience: "chairperson",
+    event: "ledger.recorded",
+    title: `${money(entry.amount_cents)} recorded as ${method}`,
+    body: `${member.member_number} — ${note.trim()}`,
+    link: "/ledger",
+    entityId: entry.id,
+    actor,
+  });
 
   await recordAudit(db, {
     actor,

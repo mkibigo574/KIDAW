@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requirePermission } from "@/lib/apiAuth";
 import { recordAudit } from "@/lib/audit";
+import { notify, money } from "@/lib/notify";
 
 // POST /api/ledger/reverse — correct a posted transaction.
 // The ledger is append-only, so a mistake is corrected by posting an equal and
@@ -61,6 +62,16 @@ export async function POST(req: NextRequest) {
     .select("id, amount_cents, paid_at")
     .single();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  await notify(db, {
+    audience: "chairperson",
+    event: "ledger.reversed",
+    title: `${money(original.amount_cents)} reversed on the ledger`,
+    body: reason.trim(),
+    link: "/ledger",
+    entityId: original.id,
+    actor,
+  });
 
   await recordAudit(db, {
     actor,

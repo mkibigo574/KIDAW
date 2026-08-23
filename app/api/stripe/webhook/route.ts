@@ -3,6 +3,7 @@ import Stripe from "stripe";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { stripe } from "@/lib/stripe";
 import { sendWelcomeEmail, sendContributionReceipt } from "@/lib/email";
+import { notify, money } from "@/lib/notify";
 
 // POST /api/stripe/webhook
 // Handles checkout.session.completed: records the contribution, activates the
@@ -59,6 +60,20 @@ export async function POST(req: NextRequest) {
   if (type === "registration") {
     await db.from("members").update({ status: "active" }).eq("id", memberId);
   }
+
+  // Money arriving is the Treasurer's business; a new member joining is the
+  // Records Officer's.
+  await notify(db, {
+    audience: type === "registration" ? ["treasurer", "records"] : "treasurer",
+    event: type === "registration" ? "member.joined" : "payment.received",
+    title:
+      type === "registration"
+        ? `${member?.member_number ?? "A new member"} joined and paid ${money(session.amount_total ?? 0)}`
+        : `${money(session.amount_total ?? 0)} contribution received`,
+    body: member ? `${member.full_name} — paid by card` : "Paid by card",
+    link: type === "registration" ? "/registry" : "/ledger",
+    entityId: memberId,
+  });
 
   if (member) {
     try {

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requirePermission } from "@/lib/apiAuth";
 import { recordAudit } from "@/lib/audit";
+import { notify } from "@/lib/notify";
 
 // POST /api/members — enter a member in the register directly.
 // For people who joined at a meeting or paid offline; the Records Officer
@@ -50,6 +51,16 @@ export async function POST(req: NextRequest) {
     .select("id, member_number, full_name, email, status")
     .single();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  await notify(db, {
+    audience: "records",
+    event: "member.created",
+    title: `${member.member_number} entered in the register`,
+    body: member.full_name,
+    link: `/registry/${member.id}`,
+    entityId: member.id,
+    actor,
+  });
 
   await recordAudit(db, {
     actor,

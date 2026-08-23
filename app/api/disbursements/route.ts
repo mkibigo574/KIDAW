@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requirePermission } from "@/lib/apiAuth";
 import { recordAudit } from "@/lib/audit";
+import { notify, money } from "@/lib/notify";
 
 // GET /api/disbursements — payments out of the fund, with the fund's position.
 export async function GET(req: NextRequest) {
@@ -96,6 +97,16 @@ export async function POST(req: NextRequest) {
     .select("*")
     .single();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  await notify(db, {
+    audience: "chairperson",
+    event: "disbursement.requested",
+    title: `${money(entry.amount_cents)} awaiting your approval`,
+    body: entry.purpose,
+    link: "/disbursements",
+    entityId: entry.id,
+    actor,
+  });
 
   await recordAudit(db, {
     actor,
