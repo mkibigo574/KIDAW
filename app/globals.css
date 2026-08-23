@@ -125,6 +125,44 @@ img { display: block; max-width: 100%; }
 .input:hover { border-color: color-mix(in srgb, var(--color-text) 45%, transparent); }
 .input:focus-visible { border-color: var(--color-accent); outline-offset: 0; }
 
+/* — address autocomplete — */
+.address-hint {
+  font-size: 12px; margin-bottom: 5px;
+  color: color-mix(in srgb, var(--color-text) 55%, transparent);
+}
+.address-wrap { position: relative; }
+.address-spinner {
+  position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+  font-size: 11px; color: color-mix(in srgb, var(--color-text) 45%, transparent);
+  pointer-events: none;
+}
+.address-list {
+  position: absolute; z-index: 20; top: calc(100% + 4px); left: 0; right: 0;
+  margin: 0; padding: 0; list-style: none; max-height: 280px; overflow-y: auto;
+  background: var(--color-bg);
+  border: 1px solid var(--color-divider); border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+}
+.address-option {
+  display: block; width: 100%; text-align: left; cursor: pointer;
+  padding: 10px 12px; font: inherit; font-size: 14px; color: var(--color-text);
+  background: transparent; border: 0;
+  border-bottom: 1px solid var(--color-divider);
+}
+.address-list li:last-child .address-option { border-bottom: 0; }
+.address-option:hover, .address-option.is-active {
+  background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+}
+.address-manual {
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  color: var(--color-accent);
+}
+.link-button {
+  padding: 0; border: 0; background: none; cursor: pointer;
+  font: inherit; font-size: 12px; color: var(--color-accent);
+  text-decoration: underline; text-underline-offset: 2px;
+}
+
 .password-wrap { position: relative; display: flex; }
 .password-wrap .input { padding-right: 62px; }
 .password-toggle {

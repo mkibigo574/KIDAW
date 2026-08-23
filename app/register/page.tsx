@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import PasswordField from "@/components/PasswordField";
+import AddressField from "@/components/AddressField";
 
 export default function RegisterPage() {
   const [form, setForm] = useState({
@@ -97,10 +98,14 @@ export default function RegisterPage() {
             <label htmlFor="dob">Date of birth</label>
             <input id="dob" className="input" value={form.dateOfBirth} onChange={set("dateOfBirth")} />
           </div>
-          <div className="field">
-            <label htmlFor="branch">Home address</label>
-            <input id="branch" className="input" value={form.branch} onChange={set("branch")} />
-          </div>
+          <AddressField
+            id="branch"
+            label="Home address"
+            hint="e.g. 20 John St or 1/20 John St"
+            value={form.branch}
+            onChange={(v) => setForm((f) => ({ ...f, branch: v }))}
+            style={{ gridColumn: "1/-1" }}
+          />
           <p className="text-muted" style={{ gridColumn: "1/-1", fontSize: 12, margin: 0 }}>
             After registration you&apos;ll add your next of kin and your
             beneficiaries — your nuclear family members — in the member portal.
