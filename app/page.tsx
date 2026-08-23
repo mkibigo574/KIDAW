@@ -2,7 +2,7 @@ import Link from "next/link";
 
 const STEPS = [
   { n: "01", title: "Register", body: "One form: your details, home address and contacts." },
-  { n: "02", title: "Contribute $100", body: "The mandatory registration contribution, paid securely by card." },
+  { n: "02", title: "Contribute A$100", body: "The mandatory registration contribution, paid securely by card." },
   { n: "03", title: "Receive your number", body: "A permanent number in the KIDAW series, emailed with your receipt." },
   { n: "04", title: "Use the portal", body: "Contribute monthly, view your statement, download receipts." },
 ];
@@ -19,7 +19,7 @@ const VALUES = [
 const INVOLVEMENT = [
   {
     title: "Become a member",
-    body: "Register, pay the $100 registration contribution and receive your permanent KIDAW number.",
+    body: "Register, pay the A$100 registration contribution and receive your permanent KIDAW number.",
     cta: "Register now",
     href: "/register",
   },
@@ -107,7 +107,7 @@ export default function HomePage() {
           <hr className="hr" style={{ margin: "44px 0 24px" }} />
           <div className="grid-stats">
             <div>
-              <div className="tabular" style={{ fontFamily: "var(--font-heading)", fontSize: 34 }}>$100</div>
+              <div className="tabular" style={{ fontFamily: "var(--font-heading)", fontSize: 34 }}>A$100</div>
               <div className="text-muted" style={{ fontSize: 12 }}>One-off registration contribution</div>
             </div>
             <div>

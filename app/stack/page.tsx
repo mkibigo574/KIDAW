@@ -43,7 +43,7 @@ const SCHEMA = [
   { col: "email / phone", type: "text", note: "Login identity and contact number" },
   { col: "branch", type: "text", note: "Home address for welfare coordination" },
   { col: "next_of_kin", type: "jsonb", note: "Name, relationship, phone" },
-  { col: "registered_at", type: "timestamptz", note: "Set when the $100 payment clears" },
+  { col: "registered_at", type: "timestamptz", note: "Set when the A$100 payment clears" },
   { col: "status", type: "enum", note: "pending · good_standing · arrears · exited" },
   { col: "contributions", type: "table", note: "member_no, type, amount, method, provider_ref, status, paid_at" },
 ];

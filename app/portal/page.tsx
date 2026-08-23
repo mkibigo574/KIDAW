@@ -319,16 +319,16 @@ function Dashboard({ session }: { session: Session }) {
 
   const stats = [
     { label: "Member number", value: member.member_number, note: `Issued ${fmtDate(member.created_at)}` },
-    { label: "Total contributed", value: `$${(total / 100).toFixed(2)}`, note: "Since registration" },
+    { label: "Total contributed", value: `A$${(total / 100).toFixed(2)}`, note: "Since registration" },
     {
       label: "Registration fee",
       value: regPaid ? "Paid" : "Pending",
-      note: regPaid ? "$100 registration contribution" : "Complete checkout to activate",
+      note: regPaid ? "A$100 registration contribution" : "Complete checkout to activate",
     },
     {
       label: "Last contribution",
       value: lastPayment ? fmtDate(lastPayment.paid_at) : "—",
-      note: lastPayment ? `$${(lastPayment.amount_cents / 100).toFixed(2)}` : "No payments yet",
+      note: lastPayment ? `A$${(lastPayment.amount_cents / 100).toFixed(2)}` : "No payments yet",
     },
   ];
 
@@ -397,7 +397,7 @@ function Dashboard({ session }: { session: Session }) {
                     <td>{c.type === "registration" ? "Registration contribution" : "Contribution"}</td>
                     <td className="text-muted">Stripe Checkout</td>
                     <td className="tabular" style={{ textAlign: "right" }}>
-                      ${(c.amount_cents / 100).toFixed(2)}
+                      A${(c.amount_cents / 100).toFixed(2)}
                     </td>
                     <td><span className="tag tag-accent">Cleared</span></td>
                   </tr>
@@ -417,7 +417,7 @@ function Dashboard({ session }: { session: Session }) {
             </p>
             <form onSubmit={contribute}>
               <div className="field">
-                <label htmlFor="amount">Amount (USD)</label>
+                <label htmlFor="amount">Amount (AUD)</label>
                 <input
                   id="amount"
                   className="input tabular"
@@ -429,7 +429,7 @@ function Dashboard({ session }: { session: Session }) {
                 />
               </div>
               <button className="btn btn-primary btn-block" disabled={paying}>
-                {paying ? "Redirecting…" : `Contribute $${amount || "0"}`}
+                {paying ? "Redirecting…" : `Contribute A$${amount || "0"}`}
               </button>
             </form>
             {error && <div className="notice notice-error">{error}</div>}

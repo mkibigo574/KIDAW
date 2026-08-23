@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
   const { error: insertError } = await db.from("contributions").insert({
     member_id: memberId,
     amount_cents: session.amount_total ?? 0,
-    currency: session.currency ?? "usd",
+    currency: session.currency ?? "aud",
     type,
     stripe_session_id: session.id,
   });

@@ -2,7 +2,7 @@ const SECTIONS = [
   {
     n: "01",
     title: "Membership",
-    body: "Membership is open to persons who complete the registration form, accept this policy and the association's constitution, and pay the mandatory registration contribution of $100. On payment clearing, a permanent member number in the KIDAW series is issued in sequence and entered in the register. A member number is personal, is never transferred, and is never reused.",
+    body: "Membership is open to persons who complete the registration form, accept this policy and the association's constitution, and pay the mandatory registration contribution of A$100. On payment clearing, a permanent member number in the KIDAW series is issued in sequence and entered in the register. A member number is personal, is never transferred, and is never reused.",
   },
   {
     n: "02",

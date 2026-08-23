@@ -72,7 +72,7 @@ export default function RegistryPage() {
 
   function exportCsv() {
     if (!rows) return;
-    const header = "member_number,full_name,email,branch,status,registered,total_usd";
+    const header = "member_number,full_name,email,branch,status,registered,total_aud";
     const lines = rows.map((m) =>
       [
         m.member_number ?? "",
@@ -196,7 +196,7 @@ export default function RegistryPage() {
                     <td className="tabular" style={{ whiteSpace: "nowrap" }}>{fmtDate(m.created_at)}</td>
                     <td className="text-muted">{m.branch ?? "—"}</td>
                     <td className="tabular" style={{ textAlign: "right" }}>
-                      ${(m.total_cents / 100).toFixed(2)}
+                      A${(m.total_cents / 100).toFixed(2)}
                     </td>
                     <td>
                       {m.status === "active" ? (

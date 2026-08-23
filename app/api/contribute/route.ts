@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
     line_items: [
       {
         price_data: {
-          currency: "usd",
+          currency: "aud",
           unit_amount: amountCents,
           product_data: { name: "KIDAW — Member Contribution" },
         },

@@ -73,7 +73,7 @@ export async function POST(req: NextRequest) {
     line_items: [
       {
         price_data: {
-          currency: "usd",
+          currency: "aud",
           unit_amount: REGISTRATION_FEE_CENTS,
           product_data: { name: "KIDAW — Registration Contribution" },
         },

@@ -75,7 +75,7 @@ export default function RegisterPage() {
       <h1 style={{ fontSize: 46, fontWeight: 400, margin: 0 }}>Member registration</h1>
       <p className="text-muted" style={{ maxWidth: "60ch", marginTop: 10 }}>
         Your member number is reserved when this form is submitted and confirmed
-        once the $100 registration contribution clears.
+        once the A$100 registration contribution clears.
       </p>
       <hr className="hr" style={{ margin: "32px 0" }} />
 
@@ -163,7 +163,7 @@ export default function RegisterPage() {
 
           <div style={{ gridColumn: "1/-1", display: "flex", gap: 12, marginTop: 8 }}>
             <button type="submit" className="btn btn-primary" disabled={loading}>
-              {loading ? "Redirecting to checkout…" : "Pay $100 and register"}
+              {loading ? "Redirecting to checkout…" : "Pay A$100 and register"}
             </button>
           </div>
 
@@ -188,11 +188,11 @@ export default function RegisterPage() {
           <hr className="hr" />
           <div style={{ display: "flex", justifyContent: "space-between", fontSize: 14 }}>
             <span>Registration contribution</span>
-            <span className="tabular">$100.00</span>
+            <span className="tabular">A$100.00</span>
           </div>
           <div style={{ display: "flex", justifyContent: "space-between", fontSize: 14, marginTop: 8 }}>
             <span className="text-muted">Processing fee</span>
-            <span className="text-muted tabular">$0.00</span>
+            <span className="text-muted tabular">A$0.00</span>
           </div>
           <hr className="hr" />
           <div
@@ -204,7 +204,7 @@ export default function RegisterPage() {
             }}
           >
             <span>Due today</span>
-            <span className="tabular">$100.00</span>
+            <span className="tabular">A$100.00</span>
           </div>
           <p className="text-muted" style={{ fontSize: 12, marginTop: 16, marginBottom: 0 }}>
             A welcome email with your member number and receipt is sent the

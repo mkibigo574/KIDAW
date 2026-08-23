@@ -62,7 +62,7 @@ export async function sendWelcomeEmail(opts: {
     shell(`
       <p style="font-size:15px">Dear ${firstName},</p>
       <p style="font-size:15px;text-align:justify">Your registration is complete
-        and your $100 registration contribution has been received. You have been
+        and your A$100 registration contribution has been received. You have been
         entered in the register as a full member.</p>
       <div style="border:1px solid ${C.accent};border-radius:4px;padding:20px;text-align:center;margin:26px 0">
         <div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:${C.accent700}">Member number</div>
