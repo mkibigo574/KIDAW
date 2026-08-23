@@ -60,8 +60,19 @@ export async function POST(req: NextRequest) {
       password,
       email_confirm: true,
     });
-    // An existing auth account is fine — they keep their current credentials.
-    if (authError && !/already|exists/i.test(authError.message)) {
+    if (authError) {
+      // Never overwrite an existing account's password here — anyone could
+      // otherwise take over a member's account by "registering" with their
+      // email. Say so plainly rather than ignoring the password they typed.
+      if (/already|exists|registered/i.test(authError.message)) {
+        return NextResponse.json(
+          {
+            error:
+              "This email already has a portal account, so the password you just typed was NOT applied — your existing password is unchanged. Sign in at the member portal with that password or an email link, and you can change it there. To complete a payment instead, leave both password fields blank and register again.",
+          },
+          { status: 409 }
+        );
+      }
       return NextResponse.json({ error: authError.message }, { status: 500 });
     }
   }
