@@ -41,6 +41,7 @@ export type Permission =
   | "minutes.manage"
   | "gallery.moderate"
   | "audit.read"
+  | "settings.manage" // the agreed dues rate and similar committee settings
   | "roles.manage";
 
 // Approver vs operator is the spine of this model. The Chairperson approves
@@ -56,6 +57,7 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     "disbursement.approve",
     "claims.approve",
     "reports.export",
+    "settings.manage",
     "roles.manage",
   ],
 
@@ -101,6 +103,7 @@ export const SENSITIVE_PERMISSIONS: Permission[] = [
   "disbursement.approve",
   "claims.approve",
   "members.delete",
+  "settings.manage",
   "roles.manage",
 ];
 

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
+import Link from "next/link";
 import { supabaseBrowser, supabaseConfigured } from "@/lib/supabaseBrowser";
 
 type Entry = {
@@ -104,13 +105,26 @@ export default function LedgerPage() {
 
   return (
     <main className="page page-wide" style={{ paddingTop: 48 }}>
-      <div>
-        <h1 style={{ fontSize: 44, fontWeight: 400, margin: 0 }}>Contribution ledger</h1>
-        <p className="text-muted" style={{ margin: "8px 0 0", maxWidth: "64ch" }}>
-          Every payment the association has received. The ledger is append-only:
-          a mistake is corrected by posting a reversing entry, so nothing already
-          recorded is ever edited or removed.
-        </p>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "flex-end",
+          justifyContent: "space-between",
+          gap: 20,
+          flexWrap: "wrap",
+        }}
+      >
+        <div>
+          <h1 style={{ fontSize: 44, fontWeight: 400, margin: 0 }}>Contribution ledger</h1>
+          <p className="text-muted" style={{ margin: "8px 0 0", maxWidth: "64ch" }}>
+            Every payment the association has received. The ledger is append-only:
+            a mistake is corrected by posting a reversing entry, so nothing already
+            recorded is ever edited or removed.
+          </p>
+        </div>
+        <Link className="btn btn-secondary" href="/arrears">
+          Arrears report
+        </Link>
       </div>
       <hr className="hr" style={{ margin: "28px 0" }} />
 
