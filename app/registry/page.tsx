@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
+import Link from "next/link";
+import AddressField from "@/components/AddressField";
 import { supabaseBrowser, supabaseConfigured } from "@/lib/supabaseBrowser";
 import { ROLE_LABELS, roleLabel } from "@/lib/roles";
 
@@ -33,6 +35,8 @@ export default function RegistryPage() {
   const [filter, setFilter] = useState<"all" | "active" | "pending">("all");
   const [myRoles, setMyRoles] = useState<string[]>([]);
   const [myPermissions, setMyPermissions] = useState<string[]>([]);
+  const [adding, setAdding] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
     if (!supabaseConfigured) {
@@ -61,7 +65,7 @@ export default function RegistryPage() {
         setMyPermissions(data.permissions ?? []);
       })
       .catch((e) => setError(e.message));
-  }, [session]);
+  }, [session, reloadKey]);
 
   const filtered = useMemo(() => {
     if (!rows) return [];
@@ -144,13 +148,30 @@ export default function RegistryPage() {
             )}
           </p>
         </div>
-        <button className="btn btn-secondary" onClick={exportCsv} disabled={!rows?.length}>
-          Export CSV
-        </button>
+        <div style={{ display: "flex", gap: 10 }}>
+          {myPermissions.includes("members.create") && (
+            <button className="btn btn-primary" onClick={() => setAdding((a) => !a)}>
+              {adding ? "Cancel" : "Enter a member"}
+            </button>
+          )}
+          <button className="btn btn-secondary" onClick={exportCsv} disabled={!rows?.length}>
+            Export CSV
+          </button>
+        </div>
       </div>
       <hr className="hr" style={{ margin: "28px 0" }} />
 
       {error && <div className="notice notice-error">{error}</div>}
+
+      {adding && session && (
+        <AddMemberForm
+          session={session}
+          onAdded={() => {
+            setAdding(false);
+            setReloadKey((k) => k + 1);
+          }}
+        />
+      )}
 
       {rows && (
         <>
@@ -199,7 +220,7 @@ export default function RegistryPage() {
                 {filtered.map((m) => (
                   <tr key={m.id}>
                     <td className="tabular" style={{ whiteSpace: "nowrap" }}>
-                      {m.member_number ?? "—"}
+                      <Link href={`/registry/${m.id}`}>{m.member_number ?? "—"}</Link>
                     </td>
                     <td>
                       {m.full_name}
@@ -383,5 +404,98 @@ function CommitteePanel({ session }: { session: Session }) {
         </button>
       </form>
     </section>
+  );
+}
+
+// Enter a member who joined at a meeting or paid offline. The Records Officer
+// creates the record; the Treasurer posts their payment against it.
+function AddMemberForm({
+  session,
+  onAdded,
+}: {
+  session: Session;
+  onAdded: () => void;
+}) {
+  const [form, setForm] = useState({
+    fullName: "",
+    email: "",
+    phone: "",
+    dateOfBirth: "",
+    branch: "",
+    referredBy: "",
+  });
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+
+  function set(field: keyof typeof form) {
+    return (e: React.ChangeEvent<HTMLInputElement>) =>
+      setForm((f) => ({ ...f, [field]: e.target.value }));
+  }
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
+    setBusy(true);
+    try {
+      const res = await fetch("/api/members", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify(form),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "The member was not created.");
+      onAdded();
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="panel panel-surface" style={{ marginBottom: 28 }}>
+      <h6 style={{ color: "var(--color-accent-700)" }}>Enter a member in the register</h6>
+      <p className="text-muted" style={{ fontSize: 13, margin: "8px 0 16px", maxWidth: "62ch" }}>
+        The next member number is issued automatically. The member starts as
+        pending and becomes active once their registration fee is recorded.
+      </p>
+      <form onSubmit={submit} className="grid-form">
+        <div className="field">
+          <label htmlFor="newName">Full name</label>
+          <input id="newName" className="input" required value={form.fullName} onChange={set("fullName")} />
+        </div>
+        <div className="field">
+          <label htmlFor="newEmail">Email address</label>
+          <input id="newEmail" type="email" className="input" required value={form.email} onChange={set("email")} />
+        </div>
+        <div className="field">
+          <label htmlFor="newPhone">Mobile number</label>
+          <input id="newPhone" className="input" value={form.phone} onChange={set("phone")} />
+        </div>
+        <div className="field">
+          <label htmlFor="newDob">Date of birth</label>
+          <input id="newDob" className="input" value={form.dateOfBirth} onChange={set("dateOfBirth")} />
+        </div>
+        <AddressField
+          id="newBranch"
+          label="Home address"
+          hint="e.g. 20 John St or 1/20 John St"
+          value={form.branch}
+          onChange={(v) => setForm((f) => ({ ...f, branch: v }))}
+          style={{ gridColumn: "1/-1" }}
+        />
+        <div className="field" style={{ gridColumn: "1/-1" }}>
+          <label htmlFor="newRef">Referred by</label>
+          <input id="newRef" className="input" value={form.referredBy} onChange={set("referredBy")} />
+        </div>
+        <button className="btn btn-primary" disabled={busy} style={{ justifySelf: "start" }}>
+          {busy ? "Creating…" : "Create member record"}
+        </button>
+      </form>
+      {error && <div className="notice notice-error">{error}</div>}
+    </div>
   );
 }
