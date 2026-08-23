@@ -122,9 +122,14 @@ export default function LedgerPage() {
             recorded is ever edited or removed.
           </p>
         </div>
-        <Link className="btn btn-secondary" href="/arrears">
-          Arrears report
-        </Link>
+        <div style={{ display: "flex", gap: 10 }}>
+          <Link className="btn btn-secondary" href="/arrears">
+            Arrears report
+          </Link>
+          <Link className="btn btn-secondary" href="/disbursements">
+            Disbursements
+          </Link>
+        </div>
       </div>
       <hr className="hr" style={{ margin: "28px 0" }} />
 
