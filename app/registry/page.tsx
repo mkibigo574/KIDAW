@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { supabaseBrowser, supabaseConfigured } from "@/lib/supabaseBrowser";
+import { ROLE_LABELS, roleLabel } from "@/lib/roles";
 
 type Row = {
   id: string;
@@ -30,6 +31,8 @@ export default function RegistryPage() {
   const [error, setError] = useState("");
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<"all" | "active" | "pending">("all");
+  const [myRoles, setMyRoles] = useState<string[]>([]);
+  const [myPermissions, setMyPermissions] = useState<string[]>([]);
 
   useEffect(() => {
     if (!supabaseConfigured) {
@@ -54,6 +57,8 @@ export default function RegistryPage() {
         const data = await r.json();
         if (!r.ok) throw new Error(data.error || "Could not load the register.");
         setRows(data.members);
+        setMyRoles(data.roles ?? []);
+        setMyPermissions(data.permissions ?? []);
       })
       .catch((e) => setError(e.message));
   }, [session]);
@@ -129,7 +134,14 @@ export default function RegistryPage() {
         <div>
           <h1 style={{ fontSize: 44, fontWeight: 400, margin: 0 }}>Member register</h1>
           <p className="text-muted" style={{ margin: "8px 0 0" }}>
-            Officials&apos; view — Record Keeping Officer and Treasurer.
+            {myRoles.length > 0 ? (
+              <>
+                Signed in as{" "}
+                {myRoles.map((r) => roleLabel(r)).join(" · ")}
+              </>
+            ) : (
+              "Officials’ view of the register."
+            )}
           </p>
         </div>
         <button className="btn btn-secondary" onClick={exportCsv} disabled={!rows?.length}>
@@ -178,7 +190,7 @@ export default function RegistryPage() {
                   <th>Number</th>
                   <th>Member</th>
                   <th>Registered</th>
-                  <th>Branch</th>
+                  <th>Home address</th>
                   <th style={{ textAlign: "right" }}>Total contributed</th>
                   <th>Standing</th>
                 </tr>
@@ -219,6 +231,157 @@ export default function RegistryPage() {
           </div>
         </>
       )}
+
+      {myPermissions.includes("roles.manage") && session && (
+        <CommitteePanel session={session} />
+      )}
     </main>
+  );
+}
+
+type Appointment = {
+  id: string;
+  email: string;
+  role: string;
+  appointed_at: string;
+};
+
+// Appoint and revoke officers. Shown only to roles carrying "roles.manage":
+// the Chairperson and the Public Officer & Record Keeping Officer.
+function CommitteePanel({ session }: { session: Session }) {
+  const [officials, setOfficials] = useState<Appointment[] | null>(null);
+  const [email, setEmail] = useState("");
+  const [role, setRole] = useState("treasurer");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+
+  async function load() {
+    const res = await fetch("/api/roles", {
+      headers: { Authorization: `Bearer ${session.access_token}` },
+    });
+    const data = await res.json();
+    if (res.ok) setOfficials(data.officials);
+    else setError(data.error);
+  }
+
+  useEffect(() => {
+    load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  async function send(payload: object) {
+    setError("");
+    setBusy(true);
+    try {
+      const res = await fetch("/api/roles", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "That did not work.");
+      await load();
+      return true;
+    } catch (e: any) {
+      setError(e.message);
+      return false;
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function appoint(e: React.FormEvent) {
+    e.preventDefault();
+    if (await send({ appoint: { email, role } })) setEmail("");
+  }
+
+  return (
+    <section style={{ marginTop: 56 }}>
+      <hr className="hr" style={{ marginBottom: 32 }} />
+      <h3 style={{ fontWeight: 400, margin: 0 }}>Committee &amp; roles</h3>
+      <p className="text-muted" style={{ fontSize: 13, marginTop: 6, maxWidth: "64ch" }}>
+        Each office grants only what that officer needs. A welfare claim is
+        recommended by the Welfare Officer, approved by the Chairperson and paid
+        by the Treasurer, so no single account can move money on its own.
+      </p>
+      {error && <div className="notice notice-error">{error}</div>}
+
+      <div className="table-wrap" style={{ marginTop: 16 }}>
+        <table className="table">
+          <thead>
+            <tr>
+              <th>Office</th>
+              <th>Held by</th>
+              <th>Appointed</th>
+              <th />
+            </tr>
+          </thead>
+          <tbody>
+            {officials?.map((o) => (
+              <tr key={o.id}>
+                <td>{roleLabel(o.role)}</td>
+                <td className="text-muted">{o.email}</td>
+                <td className="tabular" style={{ whiteSpace: "nowrap" }}>
+                  {fmtDate(o.appointed_at)}
+                </td>
+                <td style={{ textAlign: "right" }}>
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    style={{ padding: "3px 10px", fontSize: 12 }}
+                    disabled={busy}
+                    onClick={() => send({ revoke: { email: o.email, role: o.role } })}
+                  >
+                    Revoke
+                  </button>
+                </td>
+              </tr>
+            ))}
+            {officials?.length === 0 && (
+              <tr>
+                <td colSpan={4} className="text-muted">
+                  No officers appointed yet.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      <form onSubmit={appoint} className="family-add" style={{ marginTop: 18 }}>
+        <div className="field">
+          <label htmlFor="officerEmail">Officer&apos;s email address</label>
+          <input
+            id="officerEmail"
+            type="email"
+            className="input"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </div>
+        <div className="field">
+          <label htmlFor="officerRole">Office</label>
+          <select
+            id="officerRole"
+            className="input"
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
+          >
+            {Object.entries(ROLE_LABELS).map(([key, label]) => (
+              <option key={key} value={key}>
+                {label}
+              </option>
+            ))}
+          </select>
+        </div>
+        <button className="btn btn-primary" disabled={busy}>
+          Appoint
+        </button>
+      </form>
+    </section>
   );
 }

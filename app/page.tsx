@@ -51,7 +51,7 @@ const OFFICIALS = [
     contact: "chair@kidawelfare.org",
   },
   {
-    role: "Communication & Record Keeping Officer",
+    role: "Public Officer & Record Keeping Officer",
     name: "Michael Kibigo",
     duty: "Holds the member register, issues member numbers and keeps minutes.",
     contact: "records@kidawelfare.org",

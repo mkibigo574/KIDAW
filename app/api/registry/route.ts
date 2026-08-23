@@ -1,33 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabaseAdmin } from "@/lib/supabaseAdmin";
+import { requirePermission } from "@/lib/apiAuth";
 
 // GET /api/registry
-// Officials-only view of the full member register with contribution totals.
-// Access is limited to signed-in users whose email is in OFFICIALS_EMAILS
-// (comma-separated list in the environment).
+// The full member register with contribution totals, for any officer whose
+// role carries "registry.read".
 export async function GET(req: NextRequest) {
-  const token = req.headers.get("authorization")?.replace("Bearer ", "");
-  if (!token) {
-    return NextResponse.json({ error: "Not signed in." }, { status: 401 });
-  }
-
-  const db = supabaseAdmin();
-  const { data: userData, error: authError } = await db.auth.getUser(token);
-  const email = userData.user?.email?.toLowerCase();
-  if (authError || !email) {
-    return NextResponse.json({ error: "Invalid session." }, { status: 401 });
-  }
-
-  const officials = (process.env.OFFICIALS_EMAILS ?? "")
-    .split(",")
-    .map((e) => e.trim().toLowerCase())
-    .filter(Boolean);
-  if (!officials.includes(email)) {
-    return NextResponse.json(
-      { error: "The register is available to officials only." },
-      { status: 403 }
-    );
-  }
+  const auth = await requirePermission(req, "registry.read");
+  if (!auth.ok) return auth.res;
+  const { db, official } = auth.ctx;
 
   const { data: members, error } = await db
     .from("members")
@@ -50,5 +30,8 @@ export async function GET(req: NextRequest) {
       ...m,
       total_cents: totals.get(m.id) ?? 0,
     })),
+    // Lets the page show only the controls this officer may actually use.
+    roles: official.roles,
+    permissions: official.permissions,
   });
 }
