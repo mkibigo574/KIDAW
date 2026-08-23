@@ -125,6 +125,11 @@ img { display: block; max-width: 100%; }
 .input:hover { border-color: color-mix(in srgb, var(--color-text) 45%, transparent); }
 .input:focus-visible { border-color: var(--color-accent); outline-offset: 0; }
 
+/* — treasurer's ledger form — */
+.grid-ledger-form {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; align-items: end;
+}
+
 /* — address autocomplete — */
 .address-hint {
   font-size: 12px; margin-bottom: 5px;
@@ -408,7 +413,7 @@ img { display: block; max-width: 100%; }
   .grid-officials-cards, .grid-form, .grid-mission, .site-footer-top { grid-template-columns: 1fr; }
   .grid-values, .grid-involve { grid-template-columns: 1fr; }
   .grid-gallery { grid-template-columns: 1fr 1fr; }
-  .grid-family, .family-add { grid-template-columns: 1fr; }
+  .grid-family, .family-add, .grid-ledger-form { grid-template-columns: 1fr; }
   .family-add { align-items: stretch; }
   .site-flags {
     background:

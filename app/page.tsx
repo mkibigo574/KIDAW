@@ -39,7 +39,7 @@ const INVOLVEMENT = [
     title: "Serve the community",
     body: "Volunteer with welfare cases or stand for office at the next general meeting — write to the committee.",
     cta: "Email the committee",
-    href: "mailto:welfare@kidawelfare.org",
+    href: "mailto:contact@kidawelfare.org",
   },
 ];
 
@@ -48,25 +48,19 @@ const OFFICIALS = [
     role: "Chairperson",
     name: "Zablon Pingo",
     duty: "Chairs the committee and general meetings; approves welfare disbursements.",
-    contact: "chair@kidawelfare.org",
+    contact: "admin@kidawelfare.org",
   },
   {
     role: "Public Officer & Record Keeping Officer",
     name: "Michael Kibigo",
     duty: "Holds the member register, issues member numbers and keeps minutes.",
-    contact: "records@kidawelfare.org",
+    contact: "contact@kidawelfare.org",
   },
   {
     role: "Treasurer",
     name: "Eugene Simiyu",
     duty: "Keeps the contribution ledger, reconciles payments and reports to members.",
-    contact: "treasurer@kidawelfare.org",
-  },
-  {
-    role: "Welfare Officer",
-    name: "Eric Outa",
-    duty: "Receives welfare cases and coordinates support with the committee.",
-    contact: "welfare@kidawelfare.org",
+    contact: "accounts@kidawelfare.org",
   },
 ];
 
@@ -115,7 +109,7 @@ export default function HomePage() {
               <div className="text-muted" style={{ fontSize: 12 }}>Member numbers issued in sequence</div>
             </div>
             <div>
-              <div className="tabular" style={{ fontFamily: "var(--font-heading)", fontSize: 34 }}>04</div>
+              <div className="tabular" style={{ fontFamily: "var(--font-heading)", fontSize: 34 }}>03</div>
               <div className="text-muted" style={{ fontSize: 12 }}>Elected officials serving</div>
             </div>
           </div>

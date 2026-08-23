@@ -47,9 +47,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Link href="/register">Register</Link>
               <Link href="/portal">Member portal</Link>
               <Link href="/registry">Registry</Link>
+              <Link href="/ledger">Ledger</Link>
               <Link href="/gallery">Gallery</Link>
               <Link href="/stack">Stack</Link>
-              <a href="mailto:records@kidawelfare.org">Contact us</a>
+              <a href="mailto:contact@kidawelfare.org">Contact us</a>
               <Link href="/register" className="btn btn-primary" style={{ padding: "6px 14px" }}>
                 Join now
               </Link>
@@ -65,7 +66,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <p className="newsletter-blurb" style={{ marginBottom: 6 }}>
                   Questions about membership, records or contributions?
                 </p>
-                <a href="mailto:records@kidawelfare.org">records@kidawelfare.org</a>
+                <a href="mailto:contact@kidawelfare.org">contact@kidawelfare.org</a>
               </div>
             </div>
             <div className="site-footer-bottom">

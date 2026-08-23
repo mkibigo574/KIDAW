@@ -442,7 +442,7 @@ function Dashboard({ session }: { session: Session }) {
             <div className="card-title">Your details</div>
             <p className="card-body">
               Home address and contact details on file with the Record Keeping
-              Officer. Email records@kidawelfare.org to request an update.
+              Officer. Email contact@kidawelfare.org to request an update.
               Your next of kin and beneficiaries are managed below.
             </p>
             <div className="card-meta">{member.branch ?? "No address on file"}</div>

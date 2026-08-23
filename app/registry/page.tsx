@@ -304,7 +304,7 @@ function CommitteePanel({ session }: { session: Session }) {
       <h3 style={{ fontWeight: 400, margin: 0 }}>Committee &amp; roles</h3>
       <p className="text-muted" style={{ fontSize: 13, marginTop: 6, maxWidth: "64ch" }}>
         Each office grants only what that officer needs. A welfare claim is
-        recommended by the Welfare Officer, approved by the Chairperson and paid
+        recorded and initiated by the Treasurer, approved by the Chairperson and never paid
         by the Treasurer, so no single account can move money on its own.
       </p>
       {error && <div className="notice notice-error">{error}</div>}

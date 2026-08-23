@@ -2,14 +2,13 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 // The committee offices. "records" is the combined Public Officer & Record
 // Keeping Officer — one office, one account.
-export const ROLES = ["chairperson", "treasurer", "records", "welfare"] as const;
+export const ROLES = ["chairperson", "treasurer", "records"] as const;
 export type Role = (typeof ROLES)[number];
 
 export const ROLE_LABELS: Record<Role, string> = {
   chairperson: "Chairperson",
   treasurer: "Treasurer",
   records: "Public Officer & Record Keeping Officer",
-  welfare: "Welfare Officer",
 };
 
 // Safe for values arriving from the API, which are plain strings.
@@ -35,7 +34,6 @@ export type Permission =
   | "disbursement.initiate"
   | "disbursement.approve" // second signature
   | "claims.approve" // second signature on welfare claims
-  | "claims.review" // triage a claim before it reaches the chair
   // communications and governance
   | "reports.export"
   | "reports.send"
@@ -92,9 +90,6 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     "gallery.moderate",
   ],
 
-  // Not part of the three-office model; kept minimal because the committee
-  // still lists this office. Reviews claims, approves nothing.
-  welfare: ["registry.read", "family.read", "claims.review"],
 };
 
 // Permissions that let an account move or record money. These are the actions

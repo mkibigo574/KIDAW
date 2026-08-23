@@ -7,7 +7,7 @@ const SECTIONS = [
   {
     n: "02",
     title: "Why we collect it",
-    body: "This information exists for one purpose: running the welfare association. It identifies you in the register, records your contributions in the ledger, lets the Welfare Officer reach your next of kin in a welfare case, and lets us send you receipts, statements and notices. We do not sell member information, share it for marketing, or use it for anything beyond the association's work.",
+    body: "This information exists for one purpose: running the welfare association. It identifies you in the register, records your contributions in the ledger, lets the committee reach your next of kin in a welfare case, and lets us send you receipts, statements and notices. We do not sell member information, share it for marketing, or use it for anything beyond the association's work.",
   },
   {
     n: "03",
@@ -27,7 +27,7 @@ const SECTIONS = [
   {
     n: "06",
     title: "Your rights",
-    body: "You may view your record and statement in the member portal at any time. You may request a correction of any inaccurate detail, a copy of the personal information we hold about you, or — on leaving the association — deletion of your record, subject to any retention the constitution or the law requires for the register and the ledger. Write to records@kidawelfare.org.",
+    body: "You may view your record and statement in the member portal at any time. You may request a correction of any inaccurate detail, a copy of the personal information we hold about you, or — on leaving the association — deletion of your record, subject to any retention the constitution or the law requires for the register and the ledger. Write to contact@kidawelfare.org.",
   },
   {
     n: "07",
@@ -85,9 +85,9 @@ export default function PrivacyPage() {
       </div>
 
       <p className="text-muted" style={{ fontSize: 12, marginTop: 28, textAlign: "justify" }}>
-        Privacy questions and requests: Michael Kibigo, Communication and Record
-        Keeping Officer — records@kidawelfare.org. Contribution and payment
-        queries: Eugene Simiyu, Treasurer — treasurer@kidawelfare.org.
+        Privacy questions and requests: Michael Kibigo, Public Officer and
+        Record Keeping Officer — contact@kidawelfare.org. Contribution and payment
+        queries: Eugene Simiyu, Treasurer — accounts@kidawelfare.org.
       </p>
     </main>
   );

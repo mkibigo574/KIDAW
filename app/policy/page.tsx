@@ -17,12 +17,12 @@ const SECTIONS = [
   {
     n: "04",
     title: "Welfare support",
-    body: "Requests for welfare support are made to the Welfare Officer, who presents them to the committee. Disbursements are approved by the Chairperson on the committee's resolution and recorded in the ledger. The committee's decision on a welfare case is final, subject to appeal at a general meeting.",
+    body: "Requests for welfare support are made to the committee, which considers them at its next meeting. Disbursements are approved by the Chairperson on the committee's resolution and recorded in the ledger. The committee's decision on a welfare case is final, subject to appeal at a general meeting.",
   },
   {
     n: "05",
     title: "Records",
-    body: "The register and the ledger are held by the Communication and Record Keeping Officer and the Treasurer respectively. A member may inspect their own record at any time through the portal, and may request correction of any inaccurate detail by writing to records@kidawelfare.org.",
+    body: "The register and the ledger are held by the Public Officer and Record Keeping Officer and the Treasurer respectively. A member may inspect their own record at any time through the portal, and may request correction of any inaccurate detail by writing to contact@kidawelfare.org.",
   },
   {
     n: "06",
@@ -82,7 +82,7 @@ export default function PolicyPage() {
 
       <p className="text-muted" style={{ fontSize: 12, marginTop: 28, textAlign: "justify" }}>
         Questions about this policy: Michael Kibigo, Communication and Record
-        Keeping Officer — records@kidawelfare.org. Adopted by the committee of
+        Keeping Officer — contact@kidawelfare.org. Adopted by the committee of
         Kenyans in Darwin Welfare Association.
       </p>
     </main>
