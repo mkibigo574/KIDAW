@@ -12,6 +12,9 @@ export default function RegisterPage() {
     branch: "",
     kinName: "",
     kinPhone: "",
+    referredBy: "",
+    password: "",
+    confirmPassword: "",
   });
   const [accepted, setAccepted] = useState(false);
   const [nextNumber, setNextNumber] = useState<string | null>(null);
@@ -37,6 +40,14 @@ export default function RegisterPage() {
       setError("Please accept the constitution and by-laws to continue.");
       return;
     }
+    if (form.password && form.password.length < 8) {
+      setError("Password must be at least 8 characters.");
+      return;
+    }
+    if (form.password !== form.confirmPassword) {
+      setError("The two passwords do not match.");
+      return;
+    }
     setLoading(true);
     try {
       const res = await fetch("/api/register", {
@@ -50,6 +61,8 @@ export default function RegisterPage() {
           dateOfBirth: form.dateOfBirth,
           branch: form.branch,
           nextOfKin: { name_relationship: form.kinName, phone: form.kinPhone },
+          referredBy: form.referredBy,
+          password: form.password || undefined,
         }),
       });
       const data = await res.json();
@@ -104,6 +117,42 @@ export default function RegisterPage() {
             <label htmlFor="kinPhone">Next of kin — mobile number</label>
             <input id="kinPhone" className="input" value={form.kinPhone} onChange={set("kinPhone")} />
           </div>
+          <div className="field" style={{ gridColumn: "1/-1" }}>
+            <label htmlFor="referredBy">Referred by (optional)</label>
+            <input
+              id="referredBy"
+              className="input"
+              placeholder="Name or member number of the member who referred you"
+              value={form.referredBy}
+              onChange={set("referredBy")}
+            />
+          </div>
+          <div className="field">
+            <label htmlFor="password">Portal password (optional)</label>
+            <input
+              id="password"
+              type="password"
+              className="input"
+              minLength={8}
+              placeholder="At least 8 characters"
+              value={form.password}
+              onChange={set("password")}
+            />
+          </div>
+          <div className="field">
+            <label htmlFor="confirmPassword">Confirm password</label>
+            <input
+              id="confirmPassword"
+              type="password"
+              className="input"
+              value={form.confirmPassword}
+              onChange={set("confirmPassword")}
+            />
+          </div>
+          <p className="text-muted" style={{ gridColumn: "1/-1", fontSize: 12, margin: 0 }}>
+            Set a password to sign in to the member portal directly. Leave it
+            blank to sign in with an email link instead.
+          </p>
 
           <div style={{ gridColumn: "1/-1" }}>
             <div className="field"><label>Registration contribution</label></div>
@@ -111,10 +160,6 @@ export default function RegisterPage() {
               <label className="seg-opt">
                 <input type="radio" name="pay" defaultChecked />
                 <span>Card — Stripe</span>
-              </label>
-              <label className="seg-opt is-disabled" title="Coming soon">
-                <input type="radio" name="pay" disabled />
-                <span>M‑Pesa</span>
               </label>
               <label className="seg-opt is-disabled" title="Coming soon">
                 <input type="radio" name="pay" disabled />

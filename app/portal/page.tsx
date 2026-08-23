@@ -78,8 +78,11 @@ export default function PortalPage() {
 }
 
 function SignIn() {
+  const [mode, setMode] = useState<"password" | "link">("password");
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [sent, setSent] = useState(false);
+  const [resetSent, setResetSent] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -87,13 +90,38 @@ function SignIn() {
     e.preventDefault();
     setError("");
     setLoading(true);
-    const { error } = await supabaseBrowser().auth.signInWithOtp({
-      email: email.trim().toLowerCase(),
-      options: { emailRedirectTo: `${window.location.origin}/portal` },
+    const supabase = supabaseBrowser();
+    const normalized = email.trim().toLowerCase();
+    if (mode === "password") {
+      const { error } = await supabase.auth.signInWithPassword({
+        email: normalized,
+        password,
+      });
+      setLoading(false);
+      if (error) setError(error.message);
+    } else {
+      const { error } = await supabase.auth.signInWithOtp({
+        email: normalized,
+        options: { emailRedirectTo: `${window.location.origin}/portal` },
+      });
+      setLoading(false);
+      if (error) setError(error.message);
+      else setSent(true);
+    }
+  }
+
+  async function forgotPassword() {
+    setError("");
+    const normalized = email.trim().toLowerCase();
+    if (!normalized) {
+      setError("Enter your email address first, then choose “Forgot password?”.");
+      return;
+    }
+    const { error } = await supabaseBrowser().auth.resetPasswordForEmail(normalized, {
+      redirectTo: `${window.location.origin}/portal/reset`,
     });
-    setLoading(false);
     if (error) setError(error.message);
-    else setSent(true);
+    else setResetSent(true);
   }
 
   return (
@@ -102,9 +130,29 @@ function SignIn() {
         <div className="kicker">Member portal</div>
         <h1 style={{ fontSize: 36, fontWeight: 400, margin: "12px 0 8px" }}>Sign in</h1>
         <p className="text-muted" style={{ fontSize: 13 }}>
-          Your username is the email address you registered with. We&apos;ll send
-          you a secure sign‑in link.
+          Access your community account with the email address you registered
+          with.
         </p>
+        <div className="seg" style={{ marginTop: 14 }}>
+          <label className="seg-opt">
+            <input
+              type="radio"
+              name="signin-mode"
+              checked={mode === "password"}
+              onChange={() => setMode("password")}
+            />
+            <span>Password</span>
+          </label>
+          <label className="seg-opt">
+            <input
+              type="radio"
+              name="signin-mode"
+              checked={mode === "link"}
+              onChange={() => setMode("link")}
+            />
+            <span>Email link</span>
+          </label>
+        </div>
         <form onSubmit={handleSubmit} style={{ marginTop: 16 }}>
           <div className="field">
             <label htmlFor="email">Email address</label>
@@ -117,13 +165,53 @@ function SignIn() {
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
+          {mode === "password" && (
+            <div className="field" style={{ marginTop: 12 }}>
+              <label htmlFor="password">Password</label>
+              <input
+                id="password"
+                type="password"
+                className="input"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+          )}
           <button className="btn btn-primary btn-block" disabled={loading || sent}>
-            {loading ? "Sending…" : sent ? "Link sent" : "Send sign‑in link"}
+            {loading
+              ? "Signing in…"
+              : mode === "password"
+                ? "Sign in"
+                : sent
+                  ? "Link sent"
+                  : "Send sign‑in link"}
           </button>
         </form>
+        {mode === "password" && (
+          <p style={{ fontSize: 13, marginTop: 12, marginBottom: 0 }}>
+            <a
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                forgotPassword();
+              }}
+            >
+              Forgot password?
+            </a>{" "}
+            <span className="text-muted">
+              No password yet? Use the same link to set one.
+            </span>
+          </p>
+        )}
         {sent && (
           <div className="notice notice-ok">
             Check your inbox and follow the link to sign in.
+          </div>
+        )}
+        {resetSent && (
+          <div className="notice notice-ok">
+            Check your inbox for a link to set a new password.
           </div>
         )}
         {error && <div className="notice notice-error">{error}</div>}

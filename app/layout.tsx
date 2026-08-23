@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import NewsletterSignup from "@/components/NewsletterSignup";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -13,6 +14,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body>
         <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+          <div className="site-flags" aria-hidden />
           <nav className="nav">
             <Link
               href="/"
@@ -45,25 +47,53 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Link href="/register">Register</Link>
               <Link href="/portal">Member portal</Link>
               <Link href="/registry">Registry</Link>
+              <Link href="/gallery">Gallery</Link>
               <Link href="/stack">Stack</Link>
+              <a href="mailto:records@kidawelfare.org">Contact us</a>
+              <Link href="/register" className="btn btn-primary" style={{ padding: "6px 14px" }}>
+                Join now
+              </Link>
             </div>
           </nav>
+          <div className="flag-stripe" aria-hidden />
           <div style={{ flex: 1 }}>{children}</div>
           <footer className="site-footer">
-            <span>
-              © {new Date().getFullYear()} Kenyans in Darwin Welfare Association (KIDAW)
-            </span>
-            <span style={{ display: "flex", gap: 18, flexWrap: "wrap" }}>
-              <Link href="/policy" style={{ color: "inherit" }}>
-                Membership policy
-              </Link>
-              <Link href="/privacy" style={{ color: "inherit" }}>
-                Privacy policy
-              </Link>
-              <span className="tabular">
-                Member numbers issued in the KIDAW series
+            <div className="site-footer-top">
+              <NewsletterSignup />
+              <div className="site-footer-contact">
+                <div className="newsletter-title">Contact</div>
+                <p className="newsletter-blurb" style={{ marginBottom: 6 }}>
+                  Questions about membership, records or contributions?
+                </p>
+                <a href="mailto:records@kidawelfare.org">records@kidawelfare.org</a>
+              </div>
+            </div>
+            <div className="site-footer-bottom">
+              <span>
+                © {new Date().getFullYear()} Kenyans in Darwin Welfare Association (KIDAW)
               </span>
-            </span>
+              <span style={{ display: "flex", gap: 18, flexWrap: "wrap" }}>
+                <Link href="/policy" style={{ color: "inherit" }}>
+                  Membership policy
+                </Link>
+                <Link href="/privacy" style={{ color: "inherit" }}>
+                  Privacy policy
+                </Link>
+                <span className="tabular">
+                  Member numbers issued in the KIDAW series
+                </span>
+                <span>
+                  Flag maps:{" "}
+                  <a
+                    href="https://commons.wikimedia.org/wiki/File:Flag-map_of_Australia.svg"
+                    style={{ color: "inherit" }}
+                  >
+                    Wikimedia Commons
+                  </a>{" "}
+                  (CC BY-SA 4.0)
+                </span>
+              </span>
+            </div>
           </footer>
         </div>
       </body>

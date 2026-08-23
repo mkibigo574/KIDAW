@@ -3,7 +3,7 @@ const STACK = [
     need: "Payments",
     pick: "Stripe Checkout",
     licence: "Commercial, but SDKs open",
-    why: "Hosted checkout keeps card data off your servers and handles receipts, refunds and subscriptions for the monthly standing orders. Pair it with M-Pesa via the Daraja API, which most members will actually use.",
+    why: "Hosted checkout keeps card data off your servers and handles receipts, refunds and subscriptions for the monthly standing orders. Australian cards, Apple Pay and Google Pay work out of the box.",
     alts: "Hyperswitch (Apache-2.0 payments orchestrator, self-hosted), Lago for billing",
   },
   {
@@ -40,7 +40,7 @@ const SCHEMA = [
   { col: "member_no", type: "text, unique", note: "KIDAW-### from a sequence; never reused" },
   { col: "full_name", type: "text", note: "As on the national ID" },
   { col: "national_id", type: "text, unique", note: "Encrypted at rest" },
-  { col: "email / phone", type: "text", note: "Login identity and M-Pesa number" },
+  { col: "email / phone", type: "text", note: "Login identity and contact number" },
   { col: "branch", type: "text", note: "Home area for welfare coordination" },
   { col: "next_of_kin", type: "jsonb", note: "Name, relationship, phone" },
   { col: "registered_at", type: "timestamptz", note: "Set when the $100 payment clears" },

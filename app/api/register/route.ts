@@ -6,8 +6,17 @@ import { stripe, REGISTRATION_FEE_CENTS } from "@/lib/stripe";
 // Creates a pending member (member number is assigned by the DB trigger)
 // and returns a Stripe Checkout URL for the mandatory $100 registration fee.
 export async function POST(req: NextRequest) {
-  const { fullName, email, phone, nationalId, dateOfBirth, branch, nextOfKin } =
-    await req.json();
+  const {
+    fullName,
+    email,
+    phone,
+    nationalId,
+    dateOfBirth,
+    branch,
+    nextOfKin,
+    referredBy,
+    password,
+  } = await req.json();
 
   if (!fullName?.trim() || !email?.trim()) {
     return NextResponse.json(
@@ -44,6 +53,7 @@ export async function POST(req: NextRequest) {
         date_of_birth: dateOfBirth || null,
         branch: branch || null,
         next_of_kin: nextOfKin || null,
+        referred_by: referredBy || null,
       })
       .select("id")
       .single();
@@ -51,6 +61,20 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
     memberId = member.id;
+  }
+
+  // Optional portal password: create the auth account now so the member can
+  // sign in with email + password (otherwise they use the email-link flow).
+  if (typeof password === "string" && password.length >= 8) {
+    const { error: authError } = await db.auth.admin.createUser({
+      email: normalizedEmail,
+      password,
+      email_confirm: true,
+    });
+    // An existing auth account is fine — they keep their current credentials.
+    if (authError && !/already|exists/i.test(authError.message)) {
+      return NextResponse.json({ error: authError.message }, { status: 500 });
+    }
   }
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL;
