@@ -19,6 +19,7 @@ export default function RegisterPage() {
   const [nextNumber, setNextNumber] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [pendingCheckout, setPendingCheckout] = useState<string | null>(null);
 
   useEffect(() => {
     fetch("/api/next-number")
@@ -39,7 +40,11 @@ export default function RegisterPage() {
       setError("Please accept the constitution and by-laws to continue.");
       return;
     }
-    if (form.password && form.password.length < 8) {
+    if (!form.password || !form.confirmPassword) {
+      setError("Choose a portal password and confirm it to continue.");
+      return;
+    }
+    if (form.password.length < 8) {
       setError("Password must be at least 8 characters.");
       return;
     }
@@ -59,11 +64,20 @@ export default function RegisterPage() {
           dateOfBirth: form.dateOfBirth,
           branch: form.branch,
           referredBy: form.referredBy,
-          password: form.password || undefined,
+          password: form.password,
+          confirmPassword: form.confirmPassword,
         }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Registration failed.");
+      // This email already had a portal password, so the one just typed was not
+      // applied. Say so before leaving the site rather than after, otherwise the
+      // notice is lost behind the Stripe redirect.
+      if (data.passwordApplied === false) {
+        setPendingCheckout(data.checkoutUrl);
+        setLoading(false);
+        return;
+      }
       window.location.href = data.checkoutUrl; // Stripe Checkout
     } catch (err: any) {
       setError(err.message);
@@ -122,7 +136,8 @@ export default function RegisterPage() {
           </div>
           <PasswordField
             id="password"
-            label="Portal password (optional)"
+            label="Portal password"
+            required
             minLength={8}
             placeholder="At least 8 characters"
             value={form.password}
@@ -131,12 +146,15 @@ export default function RegisterPage() {
           <PasswordField
             id="confirmPassword"
             label="Confirm password"
+            required
+            minLength={8}
+            placeholder="Type it again"
             value={form.confirmPassword}
             onChange={(v) => setForm((f) => ({ ...f, confirmPassword: v }))}
           />
           <p className="text-muted" style={{ gridColumn: "1/-1", fontSize: 12, margin: 0 }}>
-            Set a password to sign in to the member portal directly. Leave it
-            blank to sign in with an email link instead.
+            You&apos;ll use this password to sign in to the member portal. An
+            email link works as well, and you can change the password there.
           </p>
 
           <div style={{ gridColumn: "1/-1" }}>
@@ -171,6 +189,21 @@ export default function RegisterPage() {
               {loading ? "Redirecting to checkout…" : "Pay A$100 and register"}
             </button>
           </div>
+
+          {pendingCheckout && (
+            <div className="notice notice-ok" style={{ gridColumn: "1/-1" }}>
+              <p style={{ margin: "0 0 10px" }}>
+                This email already has a portal account, so the password you just
+                typed was <strong>not</strong> applied — your existing password is
+                unchanged. Your registration contribution is still outstanding, so
+                you can continue to payment now, then sign in with your existing
+                password or an email link.
+              </p>
+              <a className="btn btn-primary" href={pendingCheckout}>
+                Continue to payment
+              </a>
+            </div>
+          )}
 
           {error && (
             <div className="notice notice-error" style={{ gridColumn: "1/-1" }}>
